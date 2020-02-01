@@ -1,0 +1,19 @@
+{
+    "name": "rinatsin/php-project-lvl2",
+    "description": "PHP Project implements gendiff",
+    "keywords": ["php", "gendiff", "cli"],
+    "type": "project",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "rinat salimyanov",
+            "email": "rinatsin@gmail.com"
+        }
+    ],
+    "bin": [
+        "bin/gendiff"
+    ],
+    "require": {
+        "docopt/docopt": "^1.0"
+    }
+}

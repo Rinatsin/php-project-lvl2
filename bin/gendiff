@@ -1,0 +1,29 @@
+!#  usr/bin/env php
+
+<?php
+
+$loadPath1 = __DIR__ . '/../../../autoload.php';
+$loadPath2 = __DIR__ . '/../vendor/autoload.php';
+
+if (file_exists($loadPath1)) {
+    include_once $loadPath1;
+} else {
+    include_once $loadPath2;
+}
+
+$doc = <<<DOC
+Generate diff
+
+Usage:
+  gendiff (-h|--help)
+  gendiff (-v|--version)
+
+Options:
+  -h --help                     Show this screen
+  -v --version                  Show version
+
+  DOC;
+
+  $argc = Docopt::handle($doc);
+  foreach ($argc as $k => $v)
+    echo $k . ': ' . json_encode($v) . PHP_EOL;
