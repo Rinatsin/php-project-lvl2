@@ -1,4 +1,4 @@
-!#  usr/bin/env php
+!#  /usr/bin/env php
 
 <?php
 
@@ -15,9 +15,9 @@ $doc = <<<DOC
 Generate diff
 
 Usage:
-  bin/gendiff (-h|--help)
-  bin/gendiff (-v|--version)
-  bin/gendiff [--format <fmt>] <firstFile> <secondFile>
+  gendiff (-h|--help)
+  gendiff (-v|--version)
+  gendiff [--format <fmt>] <firstFile> <secondFile>
 
 Options:
   -h --help                     Show this screen
