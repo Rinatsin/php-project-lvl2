@@ -13,6 +13,11 @@
     "bin": [
         "bin/gendiff"
     ],
+    "autoload": {
+        "files": [
+            "src/jsondiff.php"
+        ]
+    },
     "require": {
         "docopt/docopt": "^1.0"
     }
