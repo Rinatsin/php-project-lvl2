@@ -21,8 +21,7 @@ Usage:
 Options:
   -h --help                     Show this screen
   -v --version                  Show version
-
-  DOC;
+DOC;
 
   $argc = Docopt::handle($doc);
   foreach ($argc as $k => $v)
