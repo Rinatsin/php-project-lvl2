@@ -2,6 +2,8 @@
 
 <?php
 
+use function Differ\genDiff;
+
 $loadPath1 = __DIR__ . '/../../../autoload.php';
 $loadPath2 = __DIR__ . '/../vendor/autoload.php';
 
@@ -25,6 +27,14 @@ Options:
   --format <fmt>                Report format [default: pretty]
 DOC;
 
-  $argc = Docopt::handle($doc);
-  foreach ($argc as $k => $v)
-    echo $k . ': ' . json_encode($v) . PHP_EOL;
+$argc = Docopt::handle($doc);
+
+if ($argc['<firstFile>']) {
+  $diff = genDiff($argc['<firstFile>'], $argc['<secondFile>']);
+  echo $diff;
+  exit;
+}
+
+foreach ($argc as $k => $v) {
+  echo $k . ': ' . json_encode($v) . PHP_EOL;
+}
