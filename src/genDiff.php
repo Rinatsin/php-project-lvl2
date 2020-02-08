@@ -30,8 +30,8 @@ function genDiff($pathToFile1 = null, $pathToFile2 = null)
         $fileData1 = json_decode(file_get_contents($pathToFile1), true);
         $fileData2 = json_decode(file_get_contents($pathToFile2), true);
     } else {
-        $fileData1 = json_decode(file_get_contents(__DIR__ . $pathToFile1), true);
-        $fileData2 = json_decode(file_get_contents(__DIR__ . $pathToFile2), true);
+        $fileData1 = json_decode(file_get_contents($pathToFile1, true), true);
+        $fileData2 = json_decode(file_get_contents($pathToFile2, true), true);
     }
     //Формируем массив с новыми данными, согласно заданию
     $newData = [];
