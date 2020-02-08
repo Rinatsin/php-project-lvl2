@@ -15,7 +15,8 @@
     ],
     "autoload": {
         "files": [
-            "src/genDiff.php"
+            "src/genDiff.php",
+            "src/getData.php"
         ]
     },
     "require": {
