@@ -14,6 +14,9 @@
 
  namespace Differ;
 
+
+use function Differ\getData;
+
 /**
  * Function compare two files and return their difference
  *
