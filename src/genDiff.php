@@ -56,6 +56,6 @@ function genDiff($pathToFile1 = null, $pathToFile2 = null)
         $strData .= "\n{$key}: {$value}";
     }
 
-    return "{ {$strData}\n}";
+    return "{ {$strData}\n}\n";
 
 }
