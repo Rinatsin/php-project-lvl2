@@ -22,15 +22,17 @@ use function Funct\Strings\left;
  * @param string $pathToFile1 file to compare one
  * @param string $pathToFile2 file to compare two
  *
- * @return string
+ * @return array
  */
 function getData($pathToFile1, $pathToFile2)
 {
-    if (!left($pathToFile1, 1) === '/') {
-        
+    if (left($pathToFile1, 1) === '/') {
+        $fileData1 = json_decode(file_get_contents($pathToFile1), true);
+        $fileData2 = json_decode(file_get_contents($pathToFile2), true);
+        return [$fileData1, $fileData2];
+    } else {
+        $fileData1 = json_decode(file_get_contents(__DIR__ . $pathToFile1), true);
+        $fileData2 = json_decode(file_get_contents(__DIR__ . $pathToFile2), true);
     }
-    //Получаем данные из файлов
-    $fileData1 = json_decode(file_get_contents($pathToFile1), true);
-    $fileData2 = json_decode(file_get_contents($pathToFile2), true);
-
+    
 }

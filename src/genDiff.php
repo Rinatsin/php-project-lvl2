@@ -26,11 +26,14 @@ use function Funct\Strings\left;
  */
 function genDiff($pathToFile1 = null, $pathToFile2 = null)
 {
-    if (is_null($pathToFile1) && is_null($pathToFile2)) {
-        return "Can'n find file to compare";
+    if (left($pathToFile1, 1) === '/') {
+        $fileData1 = json_decode(file_get_contents($pathToFile1), true);
+        $fileData2 = json_decode(file_get_contents($pathToFile2), true);
+        return [$fileData1, $fileData2];
+    } else {
+        $fileData1 = json_decode(file_get_contents(__DIR__ . $pathToFile1), true);
+        $fileData2 = json_decode(file_get_contents(__DIR__ . $pathToFile2), true);
     }
-    $fileData1 = json_decode(file_get_contents($pathToFile1), true);
-    $fileData2 = json_decode(file_get_contents($pathToFile2), true);
     //Формируем массив с новыми данными, согласно заданию
     $newData = [];
     foreach ($fileData1 as $key => $value) {
