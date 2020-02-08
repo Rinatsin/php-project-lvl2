@@ -14,8 +14,6 @@
 
  namespace Differ;
 
-use function Funct\Strings\left;
-
 /**
  * Function compare two files and return their difference
  *
@@ -26,13 +24,10 @@ use function Funct\Strings\left;
  */
 function genDiff($pathToFile1 = null, $pathToFile2 = null)
 {
-    if (left($pathToFile1, 1) === '/') {
-        $fileData1 = json_decode(file_get_contents($pathToFile1), true);
-        $fileData2 = json_decode(file_get_contents($pathToFile2), true);
-    } else {
-        $fileData1 = json_decode(file_get_contents($pathToFile1, true), true);
-        $fileData2 = json_decode(file_get_contents($pathToFile2, true), true);
-    }
+    //Получаем данные из файлов
+    $fileData1 = getData($pathToFile1);
+    $fileData2 = getData($pathToFile2);
+
     //Формируем массив с новыми данными, согласно заданию
     $newData = [];
     foreach ($fileData1 as $key => $value) {
