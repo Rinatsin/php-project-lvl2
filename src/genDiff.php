@@ -29,7 +29,6 @@ function genDiff($pathToFile1 = null, $pathToFile2 = null)
     if (left($pathToFile1, 1) === '/') {
         $fileData1 = json_decode(file_get_contents($pathToFile1), true);
         $fileData2 = json_decode(file_get_contents($pathToFile2), true);
-        return [$fileData1, $fileData2];
     } else {
         $fileData1 = json_decode(file_get_contents(__DIR__ . $pathToFile1), true);
         $fileData2 = json_decode(file_get_contents(__DIR__ . $pathToFile2), true);
