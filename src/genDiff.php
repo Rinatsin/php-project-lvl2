@@ -14,23 +14,23 @@
 
  namespace Differ;
 
- /**
-  * Function compare two files
-  *
-  * @param array  $pathToFile1 file to compare one
-  * @param string $pathToFile2 file to compare two
-  *
-  * @return string
-  */
+use function Funct\Strings\left;
+
+/**
+ * Function compare two files and return their difference
+ *
+ * @param string $pathToFile1 file to compare one
+ * @param string $pathToFile2 file to compare two
+ *
+ * @return string
+ */
 function genDiff($pathToFile1 = null, $pathToFile2 = null)
 {
-    //Получаем данные из файлов
     if (is_null($pathToFile1) && is_null($pathToFile2)) {
-        return "Don't dispatch file ti diff";
+        return "Can'n find file to compare";
     }
     $fileData1 = json_decode(file_get_contents($pathToFile1), true);
     $fileData2 = json_decode(file_get_contents($pathToFile2), true);
-
     //Формируем массив с новыми данными, согласно заданию
     $newData = [];
     foreach ($fileData1 as $key => $value) {
