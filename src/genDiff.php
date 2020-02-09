@@ -1,7 +1,7 @@
 <?php
 
 /**
- * Command Line function change
+ * Program compare two files and return their difference
  *
  * PHP version 7.3
  *
@@ -28,25 +28,25 @@ use function Differ\getData;
 function genDiff($pathToFile1 = null, $pathToFile2 = null)
 {
     //Получаем данные из файлов
-    $fileData1 = getData($pathToFile1);
-    $fileData2 = getData($pathToFile2);
+    $dataFromFile1 = getData($pathToFile1);
+    $dataFromFile2 = getData($pathToFile2);
 
     //Формируем массив с новыми данными, согласно заданию
     $newData = [];
-    foreach ($fileData1 as $key => $value) {
-        if (array_key_exists($key, $fileData2)) {
-            if ($value === $fileData2[$key]) {
+    foreach ($dataFromFile1 as $key => $value) {
+        if (array_key_exists($key, $dataFromFile2)) {
+            if ($value === $dataFromFile2[$key]) {
                 $newData[$key] = $value;
             } else {
                 $newData['- ' . $key] = $value;
-                $newData['+ ' . $key] = $fileData2[$key];
+                $newData['+ ' . $key] = $dataFromFile2[$key];
             }
         } else {
             $newData['- ' . $key] = $value;
         }
     }
-    foreach ($fileData2 as $key => $value) {
-        if (!array_key_exists($key, $fileData1)) {
+    foreach ($dataFromFile2 as $key => $value) {
+        if (!array_key_exists($key, $dataFromFile1)) {
             $newData['+ ' . $key] = $value;
         }
     }
