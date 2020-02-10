@@ -27,8 +27,8 @@ use function Differ\getData;
 function genDiff($pathToFile1 = null, $pathToFile2 = null)
 {
     //Получаем данные из файлов
-    $dataFromFile1 = json_decode(file_get_contents($pathToFile1), true);//getData($pathToFile1);
-    $dataFromFile2 = json_decode(file_get_contents($pathToFile2), true);//getData($pathToFile2);
+    $dataFromFile1 = getData($pathToFile1);
+    $dataFromFile2 = getData($pathToFile2);
 
     //Формируем массив с новыми данными, согласно заданию
     $newData = [];
