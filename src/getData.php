@@ -14,10 +14,9 @@
 
  namespace Differ;
 
-
 /**
  * Function load data from two files and return it
- * 
+ *
  * @param string $pathToFile file to compare one
  *
  * @return array

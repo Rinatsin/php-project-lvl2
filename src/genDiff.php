@@ -14,7 +14,6 @@
 
  namespace Differ;
 
-
 use function Differ\getData;
 
 /**
@@ -57,5 +56,4 @@ function genDiff($pathToFile1 = null, $pathToFile2 = null)
     }
 
     return "{ {$strData}\n}\n";
-
 }
