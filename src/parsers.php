@@ -12,24 +12,21 @@
  * @link     https://github.com/Rinatsin/php-project-lvl2
  */
 
- namespace Differ;
+ namespace Differ\Parsers;
 
- use Symfony\Component\Yaml\Yaml;
+use Symfony\Component\Yaml\Yaml;
 
- use function Funct\Strings\endsWith;
+use function Funct\Strings\endsWith;
 
 /**
- * Function load data from two files and return it
+ * Function parse data
  *
- * @param string $pathToFile file to compare one
+ * @param string $pathToFile file to compare
  *
  * @return array
  */
-function getData($pathToFile)
+function parse($pathToFile)
 {
-    /*$fileData = json_decode(file_get_contents($pathToFile), true);
-    return $fileData;*/
-
     $fileData = [];
 
     if (endsWith($pathToFile, 'yml')) {

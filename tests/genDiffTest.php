@@ -30,7 +30,7 @@ use function Differ\genDiff;
 class DifferTest extends TestCase
 {
     /**
-     * Method test function genDiff
+     * Method test function genDiff with Json files
      *
      * @return string
      */
@@ -38,6 +38,22 @@ class DifferTest extends TestCase
     {
         $pathToFile1 = __DIR__ . '/fixtures/before.json';
         $pathToFile2 = __DIR__ . '/fixtures/after.json';
+
+        $expected = genDiff($pathToFile1, $pathToFile2);
+        $actual = file_get_contents(__DIR__ . '/fixtures/plain_result.txt');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Method test function genDiff with Yaml files
+     *
+     * @return string
+     */
+    public function testGenDiffYaml()
+    {
+        $pathToFile1 = __DIR__ . '/fixtures/before.yml';
+        $pathToFile2 = __DIR__ . '/fixtures/after.yml';
 
         $expected = genDiff($pathToFile1, $pathToFile2);
         $actual = file_get_contents(__DIR__ . '/fixtures/plain_result.txt');
