@@ -14,7 +14,6 @@
 
  namespace Differ;
 
-use function Differ\getData;
 use function Differ\Parsers\parse;
 
 /**

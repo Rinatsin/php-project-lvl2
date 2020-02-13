@@ -21,8 +21,7 @@
     "autoload": {
         "files": [
             "src/genDiff.php",
-            "src/parsers.php",
-            "src/getData.php"
+            "src/parsers.php"
         ]
     },
     "require": {
