@@ -15,6 +15,7 @@
  namespace Differ;
 
 use function Differ\getData;
+use function Differ\Parsers\parse;
 
 /**
  * Function compare two files and return their difference
@@ -27,8 +28,8 @@ use function Differ\getData;
 function genDiff($pathToFile1 = null, $pathToFile2 = null)
 {
     //Получаем данные из файлов
-    $dataFromFile1 = getData($pathToFile1);
-    $dataFromFile2 = getData($pathToFile2);
+    $dataFromFile1 = parse($pathToFile1);
+    $dataFromFile2 = parse($pathToFile2);
 
     //Формируем массив с новыми данными, согласно заданию
     $newData = [];
