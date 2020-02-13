@@ -27,3 +27,6 @@
 
 [![asciicast](https://asciinema.org/a/Sc17mxWwkkEsxsbmkaWcjcAb9.svg)](https://asciinema.org/a/Sc17mxWwkkEsxsbmkaWcjcAb9)
 
+#### 2. Поиск отличий  в двух конфигурационных файлах before.yml и after.yml, отчет выводится в виде text plain:
+
+[![asciicast](https://asciinema.org/a/eFQf7yPp91PJFo2DElLyaVE5w.svg)](https://asciinema.org/a/eFQf7yPp91PJFo2DElLyaVE5w)
