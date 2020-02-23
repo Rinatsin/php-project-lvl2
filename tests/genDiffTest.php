@@ -101,7 +101,7 @@ class DifferTest extends TestCase
                         "name" => "setting6",
                         "state" => "deleted",
                         "type" => "node",
-                        "children" => [
+                        "value" => [
                             "key" => "value"
                         ]
                     ],
@@ -115,7 +115,7 @@ class DifferTest extends TestCase
                         "name" => "setting5",
                         "state" => "added",
                         "type" => "node",
-                        "children" => [
+                        "value" => [
                             "key5" => "value5"
                         ]
                     ]

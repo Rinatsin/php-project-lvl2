@@ -86,7 +86,7 @@ function reduce($tree1, $tree2, $acc)
                 if (isset($node1[$key]) && isset($node2[$key]) && $node1[$key] === $node2[$key]) {
                     $acc[] = [
                       'name' => $key,
-                      'state' => 'no change',
+                      'state' => 'no changed',
                       'type' => 'leaf',
                       'value' => $node1[$key]
                     ];
