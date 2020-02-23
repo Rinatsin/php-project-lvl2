@@ -30,7 +30,8 @@ function genView($data1, $data2)
     //Получаем данные из файлов
     $dataFromFile1 = parse($data1);
     $dataFromFile2 = parse($data2);
-    reduce($dataFromFile1, $dataFromFile2, []);
+    $result = reduce($dataFromFile1, $dataFromFile2, []);
+    return $result;
 }
 
 /**
@@ -44,21 +45,27 @@ function genView($data1, $data2)
  */
 function reduce($tree1, $tree2, $acc)
 {
-    $keys1 = array_keys($tree1);
-    $keys2 = array_keys($tree2);
-    $reduce = function ($node1, $node2, $acc, $keys1, $keys2) use (&$reduce) {
+      $keys1 = array_keys($tree1);
+      $keys2 = array_keys($tree2);
 
+      $reduce = function ($node1, $node2, $acc, $keys1, $keys2) use (&$reduce) {
+  
         foreach ($keys1 as $key) {
-            if (is_array($node1)) {
+            if (is_array($node1[$key])) {
                 if (isset($node2[$key]) && isset($node1[$key])) {
+                    $childrenKeys1 = array_keys($node1[$key]);
+                    $childrenKeys2 = array_keys($node2[$key]);
+                    $updatedNode2 = $node2[$key];
+                    $updatedNode1 = $node1[$key];
+
+                    $updatedChildren = $reduce($updatedNode1, $updatedNode2, [], $childrenKeys1, $childrenKeys2);
                     $acc[] = [
                       'name' => $key,
                       'state' => 'changed',
                       'type' => 'node',
-                      'children' => $node1[$key]//$updatedChildren
+                      'children' => $updatedChildren
                     ];
-                } elseif (isset($node1[$key]) && !isset($node2[$key])) {
-                    //ищем удаленные узлы элементы
+                } elseif (isset($node1[$key]) && !isset($node2[$key])) {//ищем удаленные узлы элементы
                     $acc[] = [
                       'name' => $key,
                       'state' => 'deleted',
@@ -66,14 +73,38 @@ function reduce($tree1, $tree2, $acc)
                       'value' => $node1[$key]
                     ];
                 }
-            } elseif (isset($node1[$key]) && !isset($node2[$key])) {
-                //ищем удаленные листовые элементы
-                $acc[] = [
-                  'name' => $key,
-                  'state' => 'deleted',
-                  'type' => 'leaf',
-                  'value' => $node1[$key]
-                ];
+            } else {
+                if (isset($node1[$key]) && !isset($node2[$key])) {
+                    //ищем удаленные листовые элементы
+                    $acc[] = [
+                      'name' => $key,
+                      'state' => 'deleted',
+                      'type' => 'leaf',
+                      'value' => $node1[$key]
+                    ];
+                }
+                if (isset($node1[$key]) && isset($node2[$key]) && $node1[$key] === $node2[$key]) {
+                    $acc[] = [
+                      'name' => $key,
+                      'state' => 'no change',
+                      'type' => 'leaf',
+                      'value' => $node1[$key]
+                    ];
+                }
+                if (isset($node1[$key]) && isset($node2[$key]) && $node1[$key] !== $node2[$key]) {
+                    $acc[] = [
+                      'name' => $key,
+                      'state' => 'deleted',
+                      'type' => 'leaf',
+                      'value' => $node1[$key]
+                    ];
+                    $acc[] = [
+                      'name' => $key,
+                      'state' => 'added',
+                      'type' => 'leaf',
+                      'value' => $node2[$key]
+                    ];
+                }
             }
         }
         foreach ($keys2 as $key2) {
@@ -87,16 +118,16 @@ function reduce($tree1, $tree2, $acc)
                     ];
                 }
             } elseif (!isset($node1[$key2])) {
-                    $acc[] = [
-                      'name' => $key2,
-                      'state' => 'added',
-                      'type' => 'leaf',
-                      'value' => $node2[$key2]
-                    ];
+                $acc[] = [
+                  'name' => $key2,
+                  'state' => 'added',
+                  'type' => 'leaf',
+                  'value' => $node2[$key2]
+                ];
             }
         }
         return $acc;
-    };
+      };
 
-    return $reduce($tree1, $tree2, $acc, $keys1, $keys2);
+      return $reduce($tree1, $tree2, $acc, $keys1, $keys2);
 }

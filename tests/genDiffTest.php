@@ -109,7 +109,7 @@ class DifferTest extends TestCase
                         "name" => "setting4",
                         "state" => "added",
                         "type" => "leaf",
-                        "value" => "Blah blah"
+                        "value" => "blah blah"
                     ],
                     [
                         "name" => "setting5",
@@ -150,7 +150,7 @@ class DifferTest extends TestCase
                     "name" => "group2",
                     "state" => "deleted",
                     "type" => "node",
-                    "children" => [
+                    "value" => [
                         "abc" => "12345"
                     ]
                 ],
@@ -158,7 +158,7 @@ class DifferTest extends TestCase
                     "name" => "group3",
                     "state" => "added",
                     "type" => "node",
-                    "children" => [
+                    "value" => [
                         "fee" => "100500"
                     ] 
                 ]
