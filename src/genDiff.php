@@ -15,6 +15,7 @@
  namespace Differ;
 
 use function Differ\Parsers\parse;
+use function Funct\Collection\flatten;
 
 /**
  * Function compare two files and return their difference
