@@ -86,29 +86,29 @@ function reduce($tree1, $tree2, $acc)
                 if (isset($node1[$key]) && isset($node2[$key]) && $node1[$key] === $node2[$key]) {
                     $acc[] = [
                       'name' => $key,
-                      'state' => 'no changed',
+                      'state' => 'no_changed',
                       'type' => 'leaf',
                       'value' => $node1[$key]
                     ];
                 }
                 if (isset($node1[$key]) && isset($node2[$key]) && $node1[$key] !== $node2[$key]) {
                     $acc[] = [
+                    'name' => $key,
+                    'state' => 'added',
+                    'type' => 'leaf',
+                    'value' => $node2[$key]
+                    ];  
+                    $acc[] = [
                       'name' => $key,
                       'state' => 'deleted',
                       'type' => 'leaf',
                       'value' => $node1[$key]
                     ];
-                    $acc[] = [
-                      'name' => $key,
-                      'state' => 'added',
-                      'type' => 'leaf',
-                      'value' => $node2[$key]
-                    ];
                 }
             }
         }
         foreach ($keys2 as $key2) {
-            if (is_array($node1)) {
+            if (is_array($node2[$key2])) {
                 if (!isset($node1[$key2])) {
                     $acc[] = [
                       'name' => $key2,
