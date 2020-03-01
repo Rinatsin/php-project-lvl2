@@ -22,7 +22,8 @@
         "files": [
             "src/genDiff.php",
             "src/parsers.php",
-            "src/genView.php"
+            "src/getAst.php",
+            "src/render.php"
         ]
     },
     "require": {

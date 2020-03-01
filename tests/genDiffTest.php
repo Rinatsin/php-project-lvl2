@@ -17,7 +17,9 @@ namespace Differ\Tests;
 use PHPUnit\Framework\TestCase;
 
 use function Differ\genDiff;
-use function Differ\genView;
+use function Differ\getAst;
+use function Differ\getRenderingData;
+use function Differ\Parsers\parse;
 
 /**
  * Class includes tests for program gendiff
@@ -71,8 +73,10 @@ class DifferTest extends TestCase
     {
         $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
         $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
+        $parsedData1 = parse($pathToFile1);
+        $parsedData2 = parse($pathToFile2);
 
-        $expected = genView($pathToFile1, $pathToFile2);
+        $expected = getAst($parsedData1, $parsedData2);
         $actual = [
             [
                 "name" => "common",
@@ -81,25 +85,25 @@ class DifferTest extends TestCase
                 "children" => [
                     [
                         "name" => "setting1",
-                        "state" => "no_changed",
+                        "state" => "  ",
                         "type" => "leaf",
                         "value" => "Value 1"
                     ],
                     [
                         "name" => "setting2",
-                        "state" => "deleted",
+                        "state" => "- ",
                         "type" => "leaf",
                         "value" => "200"
                     ],
                     [
                         "name" => "setting3",
-                        "state" => "no_changed",
+                        "state" => "  ",
                         "type" => "leaf",
                         "value" => true
                     ],
                     [
                         "name" => "setting6",
-                        "state" => "deleted",
+                        "state" => "- ",
                         "type" => "node",
                         "value" => [
                             "key" => "value"
@@ -107,13 +111,13 @@ class DifferTest extends TestCase
                     ],
                     [
                         "name" => "setting4",
-                        "state" => "added",
+                        "state" => "+ ",
                         "type" => "leaf",
                         "value" => "blah blah"
                     ],
                     [
                         "name" => "setting5",
-                        "state" => "added",
+                        "state" => "+ ",
                         "type" => "node",
                         "value" => [
                             "key5" => "value5"
@@ -128,19 +132,19 @@ class DifferTest extends TestCase
                 "children" => [
                     [
                         "name" => "baz",
-                        "state" => "added",
+                        "state" => "+ ",
                         "type" => "leaf",
                         "value" => "bars"
                     ],
                     [
                         "name" => "baz",
-                        "state" => "deleted",
+                        "state" => "- ",
                         "type" => "leaf",
                         "value" => "bas"
                     ],
                     [
                         "name" => "foo",
-                        "state" => "no_changed",
+                        "state" => "  ",
                         "type" => "leaf",
                         "value" => "bar"
                     ]
@@ -148,7 +152,7 @@ class DifferTest extends TestCase
                 ],
                 [
                     "name" => "group2",
-                    "state" => "deleted",
+                    "state" => "- ",
                     "type" => "node",
                     "value" => [
                         "abc" => "12345"
@@ -156,14 +160,33 @@ class DifferTest extends TestCase
                 ],
                 [
                     "name" => "group3",
-                    "state" => "added",
+                    "state" => "+ ",
                     "type" => "node",
                     "value" => [
                         "fee" => "100500"
-                    ] 
+                    ]
                 ]
         ];
 
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Method test function renderAst 
+     *
+     * @return void
+     */
+    public function testRender()
+    {
+        $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
+        $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
+        $parsedData1 = parse($pathToFile1);
+        $parsedData2 = parse($pathToFile2);
+
+        $tree = getAst($parsedData1, $parsedData2);
+        $actual = file_get_contents(__DIR__ . '/fixtures/treeResult.txt');
+        $expected = getRenderingData($tree);
+        
         $this->assertEquals($expected, $actual);
     }
 }

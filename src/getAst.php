@@ -15,7 +15,6 @@
  namespace Differ;
 
 use function Differ\Parsers\parse;
-use function Funct\Collection\flatten;
 
 /**
  * Function compare two files and return their difference
@@ -23,14 +22,14 @@ use function Funct\Collection\flatten;
  * @param string $data1 file to compare one
  * @param string $data2 file to compare two
  *
- * @return string
+ * @return array
  */
-function genView($data1, $data2)
+function getAst($data1, $data2)
 {
     //Получаем данные из файлов
-    $dataFromFile1 = parse($data1);
-    $dataFromFile2 = parse($data2);
-    $result = reduce($dataFromFile1, $dataFromFile2, []);
+    //$dataFromFile1 = parse($data1);
+    //$dataFromFile2 = parse($data2);
+    $result = reduce($data1, $data2, []);
     return $result;
 }
 
@@ -55,8 +54,8 @@ function reduce($tree1, $tree2, $acc)
                 if (isset($node2[$key]) && isset($node1[$key])) {
                     $childrenKeys1 = array_keys($node1[$key]);
                     $childrenKeys2 = array_keys($node2[$key]);
-                    $updatedNode2 = $node2[$key];
                     $updatedNode1 = $node1[$key];
+                    $updatedNode2 = $node2[$key];
 
                     $updatedChildren = $reduce($updatedNode1, $updatedNode2, [], $childrenKeys1, $childrenKeys2);
                     $acc[] = [
@@ -68,7 +67,7 @@ function reduce($tree1, $tree2, $acc)
                 } elseif (isset($node1[$key]) && !isset($node2[$key])) {//ищем удаленные узлы элементы
                     $acc[] = [
                       'name' => $key,
-                      'state' => 'deleted',
+                      'state' => '- ',
                       'type' => 'node',
                       'value' => $node1[$key]
                     ];
@@ -78,7 +77,7 @@ function reduce($tree1, $tree2, $acc)
                     //ищем удаленные листовые элементы
                     $acc[] = [
                       'name' => $key,
-                      'state' => 'deleted',
+                      'state' => '- ',
                       'type' => 'leaf',
                       'value' => $node1[$key]
                     ];
@@ -86,7 +85,7 @@ function reduce($tree1, $tree2, $acc)
                 if (isset($node1[$key]) && isset($node2[$key]) && $node1[$key] === $node2[$key]) {
                     $acc[] = [
                       'name' => $key,
-                      'state' => 'no_changed',
+                      'state' => '  ',
                       'type' => 'leaf',
                       'value' => $node1[$key]
                     ];
@@ -94,13 +93,13 @@ function reduce($tree1, $tree2, $acc)
                 if (isset($node1[$key]) && isset($node2[$key]) && $node1[$key] !== $node2[$key]) {
                     $acc[] = [
                     'name' => $key,
-                    'state' => 'added',
+                    'state' => '+ ',
                     'type' => 'leaf',
                     'value' => $node2[$key]
-                    ];  
+                    ];
                     $acc[] = [
                       'name' => $key,
-                      'state' => 'deleted',
+                      'state' => '- ',
                       'type' => 'leaf',
                       'value' => $node1[$key]
                     ];
@@ -112,7 +111,7 @@ function reduce($tree1, $tree2, $acc)
                 if (!isset($node1[$key2])) {
                     $acc[] = [
                       'name' => $key2,
-                      'state' => 'added',
+                      'state' => '+ ',
                       'type' => 'node',
                       'value' => $node2[$key2]
                     ];
@@ -120,7 +119,7 @@ function reduce($tree1, $tree2, $acc)
             } elseif (!isset($node1[$key2])) {
                 $acc[] = [
                   'name' => $key2,
-                  'state' => 'added',
+                  'state' => '+ ',
                   'type' => 'leaf',
                   'value' => $node2[$key2]
                 ];

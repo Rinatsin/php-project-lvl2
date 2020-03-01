@@ -30,7 +30,10 @@ function genDiff($pathToFile1 = null, $pathToFile2 = null)
     //Получаем данные из файлов
     $dataFromFile1 = parse($pathToFile1);
     $dataFromFile2 = parse($pathToFile2);
-
+    $ast = getAst($dataFromFile1, $dataFromFile2);
+    $result = getRenderingData($ast);
+    return $result;
+    /*
     //Формируем массив с новыми данными, согласно заданию
     $newData = [];
     foreach ($dataFromFile1 as $key => $value) {
@@ -57,4 +60,6 @@ function genDiff($pathToFile1 = null, $pathToFile2 = null)
     }
 
     return "{ {$strData}\n}\n";
+    */
+
 }
