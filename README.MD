@@ -30,3 +30,7 @@
 #### 2. Поиск отличий  в двух конфигурационных файлах before.yml и after.yml, отчет выводится в виде text plain:
 
 [![asciicast](https://asciinema.org/a/eFQf7yPp91PJFo2DElLyaVE5w.svg)](https://asciinema.org/a/eFQf7yPp91PJFo2DElLyaVE5w)
+
+#### 3. Поиск отличий  в двух конфигурационных файлах beforeTree.json и afterTree.json, которые имеют древовидную структутру, отчет выводится в виде text plain:
+
+[![asciicast](https://asciinema.org/a/XrTH1MvR9kLtw8zeN9QgJXtpI.svg)](https://asciinema.org/a/XrTH1MvR9kLtw8zeN9QgJXtpI)
