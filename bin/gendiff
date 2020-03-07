@@ -19,18 +19,18 @@ Generate diff
 Usage:
   gendiff (-h|--help)
   gendiff (-v|--version)
-  gendiff [--format=<fmt>] <firstFile> <secondFile>
+  gendiff [--format <fmt>] <firstFile> <secondFile>
 
 Options:
   -h --help                     Show this screen
   -v --version                  Show version
-  --format=<fmt>                Report format [default: pretty]
+  --format <fmt>                Report format [default: pretty]
 DOC;
 
 $argc = Docopt::handle($doc);
 
 if ($argc['<firstFile>']) {
-  $diff = genDiff($argc['<firstFile>'], $argc['<secondFile>'], $argc['<fmt>']);
+  $diff = genDiff($argc['<firstFile>'], $argc['<secondFile>'], $argc['--format']);
   echo $diff;
   exit;
 }

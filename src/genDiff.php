@@ -14,9 +14,9 @@
 
  namespace Differ;
 
+
 use function Differ\Formatters\getPlainFormatOutput;
 use function Differ\Formatters\getPrettyFormatOutput;
-use function Differ\Formatters\getTextFormatOutput;
 use function Differ\Parsers\parse;
 
 /**
@@ -45,6 +45,7 @@ function genDiff($pathToFile1, $pathToFile2, $format)
     }
     
     return $result;
+
     /*
     //Формируем массив с новыми данными, согласно заданию
     $newData = [];
