@@ -12,10 +12,7 @@
  * @link     https://github.com/Rinatsin/php-project-lvl2
  */
 
- namespace Differ;
-
-use function Differ\Parsers\parse;
-use function Funct\Collection\pairs;
+namespace Differ\Formatters;
 
 /**
  * Function rendering parse tree
@@ -24,12 +21,12 @@ use function Funct\Collection\pairs;
  *
  * @return string
  */
-function getRenderingData($tree)
+function getPrettyFormatOutput($tree)
 {
     $renderingData = '';
 
     foreach ($tree as $node) {
-        $renderingData .= render($node);
+        $renderingData .= renderTreeToPretty($node);
     }
     return "{\n{$renderingData}}\n";
 }
@@ -41,7 +38,7 @@ function getRenderingData($tree)
  *
  * @return string
  */
-function render($tree)
+function renderTreeToPretty($tree)
 {
     $childrenCount = null;
 

@@ -16,9 +16,11 @@ namespace Differ\Tests;
 
 use PHPUnit\Framework\TestCase;
 
+use function Differ\Formatters\getPlainFormatOutput;
+use function Differ\Formatters\getPrettyFormatOutput;
+use function Differ\Formatters\getTextFormatOutput;
 use function Differ\genDiff;
 use function Differ\getAst;
-use function Differ\getRenderingData;
 use function Differ\Parsers\parse;
 
 /**
@@ -41,8 +43,9 @@ class DifferTest extends TestCase
     {
         $pathToFile1 = __DIR__ . '/fixtures/before.json';
         $pathToFile2 = __DIR__ . '/fixtures/after.json';
+        $format = 'pretty';
 
-        $expected = genDiff($pathToFile1, $pathToFile2);
+        $expected = genDiff($pathToFile1, $pathToFile2, $format);
         $actual = file_get_contents(__DIR__ . '/fixtures/plain_result.txt');
 
         $this->assertEquals($expected, $actual);
@@ -57,8 +60,9 @@ class DifferTest extends TestCase
     {
         $pathToFile1 = __DIR__ . '/fixtures/before.yml';
         $pathToFile2 = __DIR__ . '/fixtures/after.yml';
+        $format = 'pretty';
 
-        $expected = genDiff($pathToFile1, $pathToFile2);
+        $expected = genDiff($pathToFile1, $pathToFile2, $format);
         $actual = file_get_contents(__DIR__ . '/fixtures/plain_result.txt');
 
         $this->assertEquals($expected, $actual);
@@ -185,8 +189,36 @@ class DifferTest extends TestCase
 
         $tree = getAst($parsedData1, $parsedData2);
         $actual = file_get_contents(__DIR__ . '/fixtures/treeResult.txt');
-        $expected = getRenderingData($tree);
+        $expected = getPrettyFormatOutput($tree);
         
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Method test function renderAst 
+     *
+     * @return void
+     */
+    public function testPlainFormatter()
+    {
+        $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
+        $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
+        $parsedData1 = parse($pathToFile1);
+        $parsedData2 = parse($pathToFile2);
+
+        $tree = getAst($parsedData1, $parsedData2);
+
+        $actual = "Property 'common.setting2' was removed
+Property 'common.setting6' was removed
+Property 'common.setting4' was added with value: 'blah blah'
+Property 'common.setting5' was added with value: 'complex value'
+Property 'group1.baz' was changed. From 'bas' to 'bars'
+Property 'group2' was removed
+Property 'group3' was added with value: 'complex value'
+";
+
+        $expected = getPlainFormatOutput($tree);
+
         $this->assertEquals($expected, $actual);
     }
 }

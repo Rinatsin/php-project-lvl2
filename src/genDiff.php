@@ -14,24 +14,36 @@
 
  namespace Differ;
 
+use function Differ\Formatters\getPlainFormatOutput;
+use function Differ\Formatters\getPrettyFormatOutput;
+use function Differ\Formatters\getTextFormatOutput;
 use function Differ\Parsers\parse;
-use function Funct\Collection\flatten;
 
 /**
  * Function compare two files and return their difference
  *
  * @param string $pathToFile1 file to compare one
  * @param string $pathToFile2 file to compare two
+ * @param string $format      file format
  *
  * @return string
  */
-function genDiff($pathToFile1 = null, $pathToFile2 = null)
+function genDiff($pathToFile1, $pathToFile2, $format)
 {
     //Получаем данные из файлов
     $dataFromFile1 = parse($pathToFile1);
     $dataFromFile2 = parse($pathToFile2);
     $ast = getAst($dataFromFile1, $dataFromFile2);
-    $result = getRenderingData($ast);
+
+    switch ($format){
+    case 'pretty':
+            $result = getPrettyFormatOutput($ast);
+        break;
+    case 'plain':
+            $result = getPlainFormatOutput($ast);
+        break;
+    }
+    
     return $result;
     /*
     //Формируем массив с новыми данными, согласно заданию
