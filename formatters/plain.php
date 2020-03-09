@@ -16,6 +16,7 @@
 
 use function Funct\Collection\findWhere;
 use function Funct\Strings\contains;
+use function PHPUnit\Framework\isEmpty;
 
 /**
  * Function rendering AST (Abstract syntax tree)
@@ -26,12 +27,6 @@ use function Funct\Strings\contains;
  */
 function getPlainFormatOutput($ast)
 {
-    //$renderingData = '';
-
-    //foreach ($ast as $node) {
-    //    $renderingData .= renderTreeToPlain($node);
-    //}
-    //return $renderingData;
     return renderTreeToPlain($ast);
 }
 
@@ -95,12 +90,17 @@ function renderTreeToPlain($ast)
         }
     };
 
-
-    //return $iter($ast, '', '', []);
     return array_reduce(
         $ast,
         function ($nAcc, $nCurrent) use (&$iter, $ast) {
-            $nAcc .= $iter($nCurrent, '', '', $ast);
+            $temp = $iter($nCurrent, '', '', $ast);
+            if ($nAcc == '') {
+                $nAcc .= $iter($nCurrent, '', '', $ast);
+                return $nAcc;
+            }
+            if (!contains($nAcc, $temp)) {
+                $nAcc .= $iter($nCurrent, '', '', $ast);
+            }
             return $nAcc;
         },
         ''
