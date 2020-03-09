@@ -221,4 +221,26 @@ Property 'group3' was added with value: 'complex value'
 
         $this->assertEquals($expected, $actual);
     }
+
+    /**
+     * Method test yml files
+     * 
+     * @return void
+     */
+    public function testPlainFormatterWithSimpleYmlFiles()
+    {
+        $pathToFile1 = __DIR__ . '/fixtures/before.yml';
+        $pathToFile2 = __DIR__ . '/fixtures/after.yml';
+        $parsedData1 = parse($pathToFile1);
+        $parsedData2 = parse($pathToFile2);
+
+        $tree = getAst($parsedData1, $parsedData2);
+        $actual = "Property 'timeout' was changed. From '50' to '20'
+Property 'proxy' was removed
+Property 'verbose' was added with value: 'true'
+";
+
+        $expected = getPlainFormatOutput($tree);
+        $this->assertEquals($expected, $actual);
+    }
 }

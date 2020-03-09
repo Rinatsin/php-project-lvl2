@@ -26,12 +26,13 @@ use function Funct\Strings\contains;
  */
 function getPlainFormatOutput($ast)
 {
-    $renderingData = '';
+    //$renderingData = '';
 
-    foreach ($ast as $node) {
-        $renderingData .= renderTreeToPlain($node);
-    }
-    return $renderingData;
+    //foreach ($ast as $node) {
+    //    $renderingData .= renderTreeToPlain($node);
+    //}
+    //return $renderingData;
+    return renderTreeToPlain($ast);
 }
 
 /**
@@ -74,6 +75,7 @@ function renderTreeToPlain($ast)
             }
         }
 
+
         switch ($node['state'])
         {
         case '- ':
@@ -82,7 +84,8 @@ function renderTreeToPlain($ast)
             break;
         case '+ ':
             $acc .= "Property '{$path}' was added with value: ";
-            $acc .= isComplex($node['value']);
+            $newValue = boolToString($node['value']);
+            $acc .= isComplex($newValue);
             $acc .= "\n";
             return $acc;
             break;
@@ -92,7 +95,16 @@ function renderTreeToPlain($ast)
         }
     };
 
-    return $iter($ast, '', '', []);
+
+    //return $iter($ast, '', '', []);
+    return array_reduce(
+        $ast,
+        function ($nAcc, $nCurrent) use (&$iter, $ast) {
+            $nAcc .= $iter($nCurrent, '', '', $ast);
+            return $nAcc;
+        },
+        ''
+    );
 }
 
 /**
@@ -110,4 +122,31 @@ function isComplex($value)
         $result = "'{$value}'";
     }
     return $result;
+}
+
+/**
+ * Function check the value is a bool
+ * 
+ * @param bool $value Bool type value
+ * 
+ * @return string 
+ */
+function boolToString($value)
+{
+    $newValue = '';
+
+    if (is_bool($value)) {
+        switch ($value) {
+        case true:
+            $newValue = 'true';
+            break;
+        case false:
+            $newValue = 'false';
+            break;
+        }
+        return $newValue;
+
+    } else {
+        return $value;
+    }
 }
