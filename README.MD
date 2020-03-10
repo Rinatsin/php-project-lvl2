@@ -23,14 +23,18 @@
 
 ### Примеры использования:
 
-#### 1. Поиск отличий  в двух конфигурационных файлах before.json и after.json, отчет выводится в виде text plain:
+#### 1. Поиск отличий  в двух конфигурационных файлах before.json и after.json, отчет выводится в формате pretty:
 
 [![asciicast](https://asciinema.org/a/Sc17mxWwkkEsxsbmkaWcjcAb9.svg)](https://asciinema.org/a/Sc17mxWwkkEsxsbmkaWcjcAb9)
 
-#### 2. Поиск отличий  в двух конфигурационных файлах before.yml и after.yml, отчет выводится в виде text plain:
+#### 2. Поиск отличий  в двух конфигурационных файлах before.yml и after.yml, отчет выводится в формате pretty:
 
 [![asciicast](https://asciinema.org/a/eFQf7yPp91PJFo2DElLyaVE5w.svg)](https://asciinema.org/a/eFQf7yPp91PJFo2DElLyaVE5w)
 
-#### 3. Поиск отличий  в двух конфигурационных файлах beforeTree.json и afterTree.json, которые имеют древовидную структутру, отчет выводится в виде text plain:
+#### 3. Поиск отличий  в двух конфигурационных файлах beforeTree.json и afterTree.json, которые имеют древовидную структутру, отчет выводится в формате pretty:
 
 [![asciicast](https://asciinema.org/a/XrTH1MvR9kLtw8zeN9QgJXtpI.svg)](https://asciinema.org/a/XrTH1MvR9kLtw8zeN9QgJXtpI)
+
+#### 4. Возможность выбора формата вывода отчета используя флаг '--format'. Два типа форматов вывода, это 'pretty' и 'plain'.
+
+[![asciicast](https://asciinema.org/a/bnTuBEwCfdWmlXDaOl1FeOohk.svg)](https://asciinema.org/a/bnTuBEwCfdWmlXDaOl1FeOohk)
