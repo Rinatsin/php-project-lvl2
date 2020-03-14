@@ -23,18 +23,14 @@ namespace Differ\Formatters;
  */
 function getPrettyFormatOutput($tree)
 {
-    $renderingData = '';
-
-    foreach ($tree as $node) {
-        $renderingData .= renderTreeToPretty($node);
-    }
+    $renderingData = renderTreeToPretty($tree);
     return "{\n{$renderingData}}\n";
 }
 
 /**
  * Function rendering parse tree
  *
- * @param string $tree file to compare one
+ * @param array $tree file to compare one
  *
  * @return string
  */
@@ -101,5 +97,13 @@ function renderTreeToPretty($tree)
             $acc
         );
     };
-    return $iter($tree, '  ', $childrenCount, '');
+
+    return array_reduce(
+        $tree,
+        function ($iAcc, $iNode) use (&$iter, $childrenCount) {
+            $iAcc .= $iter($iNode, '  ', $childrenCount, '');
+            return $iAcc;
+        },
+        ''
+    );
 }

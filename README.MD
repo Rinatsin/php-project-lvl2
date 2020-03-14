@@ -15,7 +15,7 @@
 
 ### Установка утилиты
 
-Для установки утилиты при посощи composer используйте команду:
+Для установки утилиты при помощи composer используйте команду:
 
 * composer global require rinatsin/php-project-lvl2
 

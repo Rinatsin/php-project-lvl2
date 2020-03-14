@@ -16,9 +16,10 @@ namespace Differ\Tests;
 
 use PHPUnit\Framework\TestCase;
 
+use function Differ\Formatters\getJsonFormatOutput;
 use function Differ\Formatters\getPlainFormatOutput;
 use function Differ\Formatters\getPrettyFormatOutput;
-use function Differ\Formatters\getTextFormatOutput;
+use function Differ\Formatters\renderTreeToJson;
 use function Differ\genDiff;
 use function Differ\getAst;
 use function Differ\Parsers\parse;
@@ -241,6 +242,61 @@ Property 'verbose' was added with value: 'true'
 ";
 
         $expected = getPlainFormatOutput($tree);
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Method test diff output between two files in json format
+     * 
+     * @return void
+     */
+    public function testJsonFormatOutput()
+    {
+        $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
+        $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
+        $parsedData1 = parse($pathToFile1);
+        $parsedData2 = parse($pathToFile2);
+
+        $ast = getAst($parsedData1, $parsedData2);
+        $expected = getJsonFormatOutput($ast);
+        $actual = file_get_contents(__DIR__ . '/fixtures/result_tree.json');
+
+        $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Function test rendered ast for json format output
+     * 
+     * @return void
+     */
+    function testRenderedTreeForJsonFormatter()
+    {
+        $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
+        $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
+        $parsedData1 = parse($pathToFile1);
+        $parsedData2 = parse($pathToFile2);
+
+        $ast = getAst($parsedData1, $parsedData2);
+        $expected = renderTreeToJson($ast);
+        $actual = [
+                ["common" => [
+                    ["setting1" => "Value 1", "state" => "no changed"],
+                    ["setting2" => "200", "state" => "deleted"],
+                    ["setting3" => true, "state" => "no changed"],
+                    ["setting6" => ["key" => "value"], "state" => "deleted"],
+                    ["setting4" => "blah blah", "state" => "added"],
+                    ["setting5" => ["key5" => "value5"], "state" => "added"],
+                ]],
+                ["group1" => [
+                    ["baz" => "bars", "state" => "added"],
+                    ["baz" => "bas", "state" => "deleted"],
+                    ["foo" => "bar", "state" => "no changed"],
+                ]],
+                ["group2" => ["abc" => "12345"],
+                "state" => "deleted"],
+                ["group3" => ["fee" => "100500"],
+                "state" => "added"]
+        ];
         $this->assertEquals($expected, $actual);
     }
 }

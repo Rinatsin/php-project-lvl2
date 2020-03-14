@@ -24,7 +24,8 @@
             "src/parsers.php",
             "src/getAst.php",
             "formatters/pretty.php",
-            "formatters/plain.php"
+            "formatters/plain.php",
+            "formatters/json.php"
         ]
     },
     "require": {
