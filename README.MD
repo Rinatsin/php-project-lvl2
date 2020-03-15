@@ -35,6 +35,6 @@
 
 [![asciicast](https://asciinema.org/a/XrTH1MvR9kLtw8zeN9QgJXtpI.svg)](https://asciinema.org/a/XrTH1MvR9kLtw8zeN9QgJXtpI)
 
-#### 4. Возможность выбора формата вывода отчета используя флаг '--format'. Два типа форматов вывода, это 'pretty' и 'plain'.
+#### 4. Возможность выбора формата вывода отчета используя флаг '--format'. Два типа форматов вывода, это 'pretty', 'plain' и 'json'.
 
-[![asciicast](https://asciinema.org/a/bnTuBEwCfdWmlXDaOl1FeOohk.svg)](https://asciinema.org/a/bnTuBEwCfdWmlXDaOl1FeOohk)
+[![asciicast](https://asciinema.org/a/p3IWDtVjfkWL9KArethqlBcdg.svg)](https://asciinema.org/a/p3IWDtVjfkWL9KArethqlBcdg)
