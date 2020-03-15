@@ -101,7 +101,7 @@ function buildAst($before, $after)
                           'value' => $before[$key]
                         ];
                     }
-                } elseif (!isset($before[$key]) && isset($after[$key])) {
+                } else {//(!isset($before[$key]) && isset($after[$key])) {
                     if (is_array($after[$key])) {
                         $iAcc[] = [
                           'name' => $key,
