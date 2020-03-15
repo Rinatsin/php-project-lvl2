@@ -16,9 +16,9 @@
 
 /**
  * Function get rendering ast and pass it to output
- * 
- * @param array $renderedAst rendered tree 
- * 
+ *
+ * @param array $ast rendered tree
+ *
  * @return json
  */
 function getJsonFormatOutput($ast)
@@ -34,7 +34,7 @@ function getJsonFormatOutput($ast)
   *
   * @param array $ast Abstract syntax tree to diff between two files
   *
-  * @return json 
+  * @return json
   */
 function renderTreeToJson($ast)
 {

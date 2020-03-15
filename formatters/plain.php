@@ -16,13 +16,12 @@
 
 use function Funct\Collection\findWhere;
 use function Funct\Strings\contains;
-use function PHPUnit\Framework\isEmpty;
 
 /**
  * Function rendering AST (Abstract syntax tree)
- * 
+ *
  * @param array $ast abstract syntax tree
- * 
+ *
  * @return string return diff between two files in plain format
  */
 function getPlainFormatOutput($ast)
@@ -32,9 +31,9 @@ function getPlainFormatOutput($ast)
 
 /**
  * Function rendering AST (Abstract syntax tree)
- * 
+ *
  * @param array $ast abstract syntax tree
- * 
+ *
  * @return string return diff between two files in plain format
  */
 function renderTreeToPlain($ast)
@@ -109,9 +108,9 @@ function renderTreeToPlain($ast)
 
 /**
  * Function check value is a complex structure
- * 
- * @param mixed $value 
- * 
+ *
+ * @param mixed $value value to check
+ *
  * @return string
  */
 function isComplex($value)
@@ -126,9 +125,9 @@ function isComplex($value)
 
 /**
  * Function check the value is a bool
- * 
+ *
  * @param bool $value Bool type value
- * 
+ *
  * @return string 
  */
 function boolToString($value)

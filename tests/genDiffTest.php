@@ -177,7 +177,7 @@ class DifferTest extends TestCase
     }
 
     /**
-     * Method test function renderAst 
+     * Method test function renderAst
      *
      * @return void
      */
@@ -196,7 +196,7 @@ class DifferTest extends TestCase
     }
 
     /**
-     * Method test function renderAst 
+     * Method test function renderAst
      *
      * @return void
      */
@@ -225,7 +225,7 @@ Property 'group3' was added with value: 'complex value'
 
     /**
      * Method test yml files
-     * 
+     *
      * @return void
      */
     public function testPlainFormatterWithSimpleYmlFiles()
@@ -247,7 +247,7 @@ Property 'verbose' was added with value: 'true'
 
     /**
      * Method test diff output between two files in json format
-     * 
+     *
      * @return void
      */
     public function testJsonFormatOutput()
@@ -266,10 +266,10 @@ Property 'verbose' was added with value: 'true'
 
     /**
      * Function test rendered ast for json format output
-     * 
+     *
      * @return void
      */
-    function testRenderedTreeForJsonFormatter()
+    public function testRenderedTreeForJsonFormatter()
     {
         $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
         $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';

@@ -40,17 +40,15 @@ function renderTreeToPretty($tree)
 
     $iter = function ($node, $depthToSpace, &$childrenCount, $acc) use (&$iter) {
         $children = $node['children'] ??  null;
-        //если детей нет 
+        //если детей нет
         if (!$children) {
             if (isset($childrenCount)) {
                 $childrenCount = $childrenCount - 1;
             }
             //если значение массив и нет потомков то добавляем как есть
             if ($node['type'] === 'node') {
-
                 $jsonView = json_encode($node['value']);
                 $strView = str_replace(['{"', '":"', '","', '"}'], ['', ': ', "\n{$depthToSpace}"], $jsonView);
-
                 $acc .= "{$depthToSpace}{$node['state']}{$node['name']}: {\n";
                 $depthToSpace .= '  ';
                 $acc .= "{$depthToSpace}    {$strView}\n{$depthToSpace}}\n";
