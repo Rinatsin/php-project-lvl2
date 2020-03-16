@@ -22,6 +22,7 @@ use function Differ\Formatters\getPrettyFormatOutput;
 use function Differ\Formatters\renderTreeToJson;
 use function Differ\genDiff;
 use function Differ\getAst;
+use function Differ\Parsers\getParsedData;
 use function Differ\Parsers\parse;
 
 /**
@@ -78,8 +79,8 @@ class DifferTest extends TestCase
     {
         $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
         $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
-        $parsedData1 = parse($pathToFile1);
-        $parsedData2 = parse($pathToFile2);
+        $parsedData1 = getParsedData($pathToFile1);
+        $parsedData2 = getParsedData($pathToFile2);
 
         $expected = getAst($parsedData1, $parsedData2);
         $actual = [
@@ -185,8 +186,8 @@ class DifferTest extends TestCase
     {
         $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
         $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
-        $parsedData1 = parse($pathToFile1);
-        $parsedData2 = parse($pathToFile2);
+        $parsedData1 = getParsedData($pathToFile1);
+        $parsedData2 = getParsedData($pathToFile2);
 
         $tree = getAst($parsedData1, $parsedData2);
         $actual = file_get_contents(__DIR__ . '/fixtures/treeResult.txt');
@@ -204,8 +205,8 @@ class DifferTest extends TestCase
     {
         $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
         $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
-        $parsedData1 = parse($pathToFile1);
-        $parsedData2 = parse($pathToFile2);
+        $parsedData1 = getParsedData($pathToFile1);
+        $parsedData2 = getParsedData($pathToFile2);
 
         $tree = getAst($parsedData1, $parsedData2);
 
@@ -232,8 +233,8 @@ Property 'group3' was added with value: 'complex value'
     {
         $pathToFile1 = __DIR__ . '/fixtures/before.yml';
         $pathToFile2 = __DIR__ . '/fixtures/after.yml';
-        $parsedData1 = parse($pathToFile1);
-        $parsedData2 = parse($pathToFile2);
+        $parsedData1 = getParsedData($pathToFile1);
+        $parsedData2 = getParsedData($pathToFile2);
 
         $tree = getAst($parsedData1, $parsedData2);
         $actual = "Property 'timeout' was changed. From '50' to '20'
@@ -254,8 +255,8 @@ Property 'verbose' was added with value: 'true'
     {
         $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
         $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
-        $parsedData1 = parse($pathToFile1);
-        $parsedData2 = parse($pathToFile2);
+        $parsedData1 = getParsedData($pathToFile1);
+        $parsedData2 = getParsedData($pathToFile2);
 
         $ast = getAst($parsedData1, $parsedData2);
         $expected = getJsonFormatOutput($ast);
@@ -273,8 +274,8 @@ Property 'verbose' was added with value: 'true'
     {
         $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
         $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
-        $parsedData1 = parse($pathToFile1);
-        $parsedData2 = parse($pathToFile2);
+        $parsedData1 = getParsedData($pathToFile1);
+        $parsedData2 = getParsedData($pathToFile2);
 
         $ast = getAst($parsedData1, $parsedData2);
         $expected = renderTreeToJson($ast);

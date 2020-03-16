@@ -25,15 +25,42 @@ use function Funct\Strings\endsWith;
  *
  * @return array
  */
-function parse($pathToFile)
+function getParsedData($pathToFile)
 {
-    $fileData = [];
+    $result = [];
+    $data = file_get_contents($pathToFile);
 
     if (endsWith($pathToFile, 'yml')) {
-        $fileData = Yaml::parseFile($pathToFile);
-        return $fileData;
+        $result = parseYaml($data);
     } elseif (endsWith($pathToFile, 'json')) {
-        $fileData = json_decode(file_get_contents($pathToFile), true);
-        return $fileData;
+        $result = parseJson($data);
     }
+
+    return $result;
+}
+
+/**
+ * Function parse yaml data
+ *
+ * @param string $data data from file
+ *
+ * @return array return array
+ */
+function parseYaml($data)
+{
+    $result = Yaml::parse($data);
+    return $result;
+}
+
+/**
+ * Function parse json data
+ *
+ * @param string $data data from file
+ *
+ * @return array return array
+ */
+function parseJson($data)
+{
+    $result = json_decode($data, true);
+    return $result;
 }

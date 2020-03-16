@@ -17,7 +17,7 @@
 use function Differ\Formatters\getJsonFormatOutput;
 use function Differ\Formatters\getPlainFormatOutput;
 use function Differ\Formatters\getPrettyFormatOutput;
-use function Differ\Parsers\parse;
+use function Differ\Parsers\getParsedData;
 
 /**
  * Function compare two files and return their difference
@@ -31,8 +31,8 @@ use function Differ\Parsers\parse;
 function genDiff($pathToFile1, $pathToFile2, $format)
 {
     //Получаем данные из файлов
-    $dataFromFile1 = parse($pathToFile1);
-    $dataFromFile2 = parse($pathToFile2);
+    $dataFromFile1 = getParsedData($pathToFile1);
+    $dataFromFile2 = getParsedData($pathToFile2);
     $ast = getAst($dataFromFile1, $dataFromFile2);
 
     switch ($format) {
