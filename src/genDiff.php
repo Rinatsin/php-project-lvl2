@@ -12,7 +12,7 @@
  * @link     https://github.com/Rinatsin/php-project-lvl2
  */
 
- namespace Differ;
+namespace Differ;
 
 use function Differ\Formatters\getJsonFormatOutput;
 use function Differ\Formatters\getPlainFormatOutput;
@@ -36,15 +36,15 @@ function genDiff($pathToFile1, $pathToFile2, $format)
     $ast = getAst($dataFromFile1, $dataFromFile2);
 
     switch ($format) {
-    case 'pretty':
+        case 'pretty':
             $result = getPrettyFormatOutput($ast);
-        break;
-    case 'plain':
+            break;
+        case 'plain':
             $result = getPlainFormatOutput($ast);
-        break;
-    case 'json':
+            break;
+        case 'json':
             $result = getJsonFormatOutput($ast);
-        break;
+            break;
     }
     
     return $result;

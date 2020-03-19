@@ -23,7 +23,6 @@ use function Differ\Formatters\renderTreeToJson;
 use function Differ\genDiff;
 use function Differ\getAst;
 use function Differ\Parsers\getParsedData;
-use function Differ\Parsers\parse;
 
 /**
  * Class includes tests for program gendiff
@@ -48,7 +47,7 @@ class DifferTest extends TestCase
         $format = 'pretty';
 
         $expected = genDiff($pathToFile1, $pathToFile2, $format);
-        $actual = file_get_contents(__DIR__ . '/fixtures/plain_result.txt');
+        $actual = file_get_contents(__DIR__ . '/fixtures/prettyFormatResult');
 
         $this->assertEquals($expected, $actual);
     }
@@ -65,7 +64,7 @@ class DifferTest extends TestCase
         $format = 'pretty';
 
         $expected = genDiff($pathToFile1, $pathToFile2, $format);
-        $actual = file_get_contents(__DIR__ . '/fixtures/plain_result.txt');
+        $actual = file_get_contents(__DIR__ . '/fixtures/prettyFormatResult');
 
         $this->assertEquals($expected, $actual);
     }
@@ -88,24 +87,28 @@ class DifferTest extends TestCase
                 "name" => "common",
                 "state" => "changed",
                 "type" => "node",
+                'value' => '',
                 "children" => [
                     [
                         "name" => "setting1",
                         "state" => "  ",
                         "type" => "leaf",
-                        "value" => "Value 1"
+                        "value" => "Value 1",
+                        "children" => []
                     ],
                     [
                         "name" => "setting2",
                         "state" => "- ",
                         "type" => "leaf",
-                        "value" => "200"
+                        "value" => "200",
+                        "children" => []
                     ],
                     [
                         "name" => "setting3",
                         "state" => "  ",
                         "type" => "leaf",
-                        "value" => true
+                        "value" => true,
+                        "children" => []
                     ],
                     [
                         "name" => "setting6",
@@ -113,13 +116,15 @@ class DifferTest extends TestCase
                         "type" => "node",
                         "value" => [
                             "key" => "value"
-                        ]
+                        ],
+                        "children" => []
                     ],
                     [
                         "name" => "setting4",
                         "state" => "+ ",
                         "type" => "leaf",
-                        "value" => "blah blah"
+                        "value" => "blah blah",
+                        "children" => []
                     ],
                     [
                         "name" => "setting5",
@@ -127,7 +132,8 @@ class DifferTest extends TestCase
                         "type" => "node",
                         "value" => [
                             "key5" => "value5"
-                        ]
+                        ],
+                        "children" => []
                     ]
                 ]
             ],
@@ -135,24 +141,28 @@ class DifferTest extends TestCase
                 "name" => "group1",
                 "state" => "changed",
                 "type" => "node",
+                'value' => '',
                 "children" => [
                     [
                         "name" => "baz",
                         "state" => "+ ",
                         "type" => "leaf",
-                        "value" => "bars"
+                        "value" => "bars",
+                        "children" => []
                     ],
                     [
                         "name" => "baz",
                         "state" => "- ",
                         "type" => "leaf",
-                        "value" => "bas"
+                        "value" => "bas",
+                        "children" => []
                     ],
                     [
                         "name" => "foo",
                         "state" => "  ",
                         "type" => "leaf",
-                        "value" => "bar"
+                        "value" => "bar",
+                        "children" => []
                     ]
                 ]
                 ],
@@ -162,7 +172,8 @@ class DifferTest extends TestCase
                     "type" => "node",
                     "value" => [
                         "abc" => "12345"
-                    ]
+                    ],
+                    "children" => []
                 ],
                 [
                     "name" => "group3",
@@ -170,7 +181,8 @@ class DifferTest extends TestCase
                     "type" => "node",
                     "value" => [
                         "fee" => "100500"
-                    ]
+                    ],
+                    "children" => []
                 ]
         ];
 
@@ -190,7 +202,7 @@ class DifferTest extends TestCase
         $parsedData2 = getParsedData($pathToFile2);
 
         $tree = getAst($parsedData1, $parsedData2);
-        $actual = file_get_contents(__DIR__ . '/fixtures/treeResult.txt');
+        $actual = file_get_contents(__DIR__ . '/fixtures/prettyFormatTreeResult');
         $expected = getPrettyFormatOutput($tree);
         
         $this->assertEquals($expected, $actual);

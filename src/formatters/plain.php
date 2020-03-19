@@ -70,22 +70,21 @@ function renderTreeToPlain($ast)
         }
 
 
-        switch ($node['state'])
-        {
-        case '- ':
-            $acc .= "Property '{$path}' was removed\n";
-            return $acc;
-            break;
-        case '+ ':
-            $acc .= "Property '{$path}' was added with value: ";
-            $newValue = boolToString($node['value']);
-            $acc .= isComplex($newValue);
-            $acc .= "\n";
-            return $acc;
-            break;
-        case '  ':
-            return $acc;
-            break;
+        switch ($node['state']) {
+            case '- ':
+                $acc .= "Property '{$path}' was removed\n";
+                return $acc;
+                break;
+            case '+ ':
+                $acc .= "Property '{$path}' was added with value: ";
+                $newValue = boolToString($node['value']);
+                $acc .= isComplex($newValue);
+                $acc .= "\n";
+                return $acc;
+                break;
+            case '  ':
+                return $acc;
+                break;
         }
     };
 
@@ -128,7 +127,7 @@ function isComplex($value)
  *
  * @param bool $value Bool type value
  *
- * @return string 
+ * @return string
  */
 function boolToString($value)
 {
@@ -136,15 +135,14 @@ function boolToString($value)
 
     if (is_bool($value)) {
         switch ($value) {
-        case true:
-            $newValue = 'true';
-            break;
-        case false:
-            $newValue = 'false';
-            break;
+            case true:
+                $newValue = 'true';
+                break;
+            case false:
+                $newValue = 'false';
+                break;
         }
         return $newValue;
-
     } else {
         return $value;
     }

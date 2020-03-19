@@ -23,9 +23,9 @@
             "src/genDiff.php",
             "src/parsers.php",
             "src/getAst.php",
-            "formatters/pretty.php",
-            "formatters/plain.php",
-            "formatters/json.php"
+            "src/formatters/pretty.php",
+            "src/formatters/plain.php",
+            "src/formatters/json.php"
         ]
     },
     "require": {

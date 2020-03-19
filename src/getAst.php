@@ -28,19 +28,19 @@ use function Funct\Invoke\ifIsset;
  */
 function getAst($before, $after)
 {
-    $result = buildAst($before, $after);
+    $result = buildAst2($before, $after);
     return $result;
 }
 
 /**
- * Function compare two files with tree structure and return their difference
+ * Function build ast
  *
- * @param array $before file to compare one
- * @param array $after  file to compare two
+ * @param array $before first file for diff
+ * @param array $after  second file for diff
  *
- * @return array
+ * @return array return ast
  */
-function buildAst($before, $after)
+function buildAst2($before, $after)
 {
     $keys = union(array_keys($before), array_keys($after));
 
@@ -56,66 +56,26 @@ function buildAst($before, $after)
                         $beforeChilds = $before[$key];
                         $afterChilds = $after[$key];
                         $childs = $iter($beforeChilds, $afterChilds, $childKeys, []);
-                        $iAcc[] = [
-                          'name' => $key,
-                          'state' => 'changed',
-                          'type' => 'node',
-                          'children' => $childs
-                        ];
+                        $iAcc[] = createNode($key, 'changed', 'node', '', $childs);
                     } else {
                         if ($before[$key] === $after[$key]) {
-                            $iAcc[] = [
-                              'name' => $key,
-                              'state' => '  ',
-                              'type' => 'leaf',
-                              'value' => $before[$key]
-                            ];
+                            $iAcc[] = createNode($key, '  ', 'leaf', $before[$key], []);
                         } else {
-                            $iAcc[] = [
-                              'name' => $key,
-                              'state' => '+ ',
-                              'type' => 'leaf',
-                              'value' => $after[$key]
-                            ];
-                            $iAcc[] = [
-                              'name' => $key,
-                              'state' => '- ',
-                              'type' => 'leaf',
-                              'value' => $before[$key]
-                            ];
+                            $iAcc[] = createNode($key, '+ ', 'leaf', $after[$key], []);
+                            $iAcc[] = createNode($key, '- ', 'leaf', $before[$key], []);
                         }
                     }
                 } elseif (isset($before[$key]) && !isset($after[$key])) {
                     if (is_array($before[$key])) {
-                        $iAcc[] = [
-                          'name' => $key,
-                          'state' => '- ',
-                          'type' => 'node',
-                          'value' => $before[$key]
-                        ];
+                        $iAcc[] = createNode($key, '- ', 'node', $before[$key], []);
                     } else {
-                        $iAcc[] = [
-                          'name' => $key,
-                          'state' => '- ',
-                          'type' => 'leaf',
-                          'value' => $before[$key]
-                        ];
+                        $iAcc[] = createNode($key, '- ', 'leaf', $before[$key], []);
                     }
-                } else {//(!isset($before[$key]) && isset($after[$key])) {
+                } elseif (!isset($before[$key]) && isset($after[$key])) {
                     if (is_array($after[$key])) {
-                        $iAcc[] = [
-                          'name' => $key,
-                          'state' => '+ ',
-                          'type' => 'node',
-                          'value' => $after[$key]
-                        ];
+                        $iAcc[] = createNode($key, '+ ', 'node', $after[$key], []);
                     } else {
-                        $iAcc[] = [
-                          'name' => $key,
-                          'state' => '+ ',
-                          'type' => 'leaf',
-                          'value' => $after[$key]
-                        ];
+                        $iAcc[] = createNode($key, '+ ', 'leaf', $after[$key], []);
                     }
                 }
                 return $iAcc;
@@ -126,4 +86,26 @@ function buildAst($before, $after)
     };
 
     return $iter($before, $after, $keys, []);
+}
+
+/**
+ * Function create new node
+ *
+ * @param string $name   node name
+ * @param string $state  node state (added, deleted or no changed)
+ * @param string $type   node type (node or leaf)
+ * @param string $value  node value
+ * @param array  $childs childs current node
+ *
+ * @return array return node of ast
+ */
+function createNode($name, $state, $type, $value, $childs)
+{
+    return [
+      'name' => $name,
+      'state' => $state,
+      'type' => $type,
+      'value' => $value,
+      'children' => $childs
+    ];
 }

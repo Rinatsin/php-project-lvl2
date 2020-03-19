@@ -52,15 +52,15 @@ function renderTreeToJson($ast)
         }
         $state = '';
         switch ($node['state']) {
-        case '  ':
-            $state = 'no changed';
-            break;
-        case '+ ':
-            $state = 'added';
-            break;
-        case '- ':
-            $state = 'deleted';
-            break;
+            case '  ':
+                $state = 'no changed';
+                break;
+            case '+ ':
+                $state = 'added';
+                break;
+            case '- ':
+                $state = 'deleted';
+                break;
         }
         return [$node['name'] => $node['value'], "state" => $state];
     };

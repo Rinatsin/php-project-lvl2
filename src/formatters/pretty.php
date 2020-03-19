@@ -62,12 +62,12 @@ function renderTreeToPretty($tree)
             
             if (is_bool($node['value'])) {
                 switch ($node['value']) {
-                case true:
-                    $node['value'] = 'true';
-                    break;
-                case false:
-                    $node['value'] = 'false';
-                    break;
+                    case true:
+                        $node['value'] = 'true';
+                        break;
+                    case false:
+                        $node['value'] = 'false';
+                        break;
                 }
             }
 
