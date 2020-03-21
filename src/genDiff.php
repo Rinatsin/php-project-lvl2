@@ -14,6 +14,8 @@
 
 namespace Differ;
 
+use Error;
+
 use function Differ\Formatters\getJsonFormatOutput;
 use function Differ\Formatters\getPlainFormatOutput;
 use function Differ\Formatters\getPrettyFormatOutput;
@@ -34,6 +36,7 @@ function genDiff($pathToFile1, $pathToFile2, $format)
     $dataFromFile1 = getParsedData($pathToFile1);
     $dataFromFile2 = getParsedData($pathToFile2);
     $ast = getAst($dataFromFile1, $dataFromFile2);
+    $result = '';
 
     switch ($format) {
         case 'pretty':
@@ -45,6 +48,8 @@ function genDiff($pathToFile1, $pathToFile2, $format)
         case 'json':
             $result = getJsonFormatOutput($ast);
             break;
+        default:
+            throw new Error("Unknown output format: {$format}");
     }
     
     return $result;

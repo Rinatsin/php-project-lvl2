@@ -82,7 +82,7 @@ function renderTreeToPlain($ast)
                 $acc .= "\n";
                 return $acc;
                 break;
-            case '  ':
+            default:
                 return $acc;
                 break;
         }
