@@ -15,6 +15,7 @@
  namespace Differ\Parsers;
 
 use Error;
+use ErrorException;
 use Symfony\Component\Yaml\Yaml;
 
 use function Funct\Strings\endsWith;
@@ -40,7 +41,7 @@ function getParsedData($pathToFile)
             $result = parseJson($data);
             break;
         default:
-            throw new Error("Unknown file extension: {$pathParts['extension']}");
+            throw new ErrorException("Unknown file extension: {$pathParts['extension']}");
     }
 
     return $result;

@@ -242,7 +242,7 @@ class DifferTest extends TestCase
     }
 
     /**
-     * Function test wrong format
+     * Function test wrong output format
      *
      * @return void
      */
@@ -251,6 +251,21 @@ class DifferTest extends TestCase
         $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
         $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
         $format = 'txt';
+
+        $this->expectExceptionMessage("Unknown output format: {$format}");
+        genDiff($pathToFile1, $pathToFile2, $format);
+    }
+
+    /**
+     * Function test wrong extension
+     *
+     * @return void
+     */
+    public function testWrongExtension()
+    {
+        $pathToFile1 = __DIR__ . '/fixtures/wrong_extension.txt';
+        $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
+        $format = 'plain';
 
         $this->expectException(ErrorException::class);
         genDiff($pathToFile1, $pathToFile2, $format);
