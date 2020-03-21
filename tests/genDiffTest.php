@@ -243,7 +243,7 @@ class DifferTest extends TestCase
 
     /**
      * Function test wrong format
-     * 
+     *
      * @return void
      */
     public function testWrongOutputFormat()
