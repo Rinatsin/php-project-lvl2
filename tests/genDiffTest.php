@@ -14,6 +14,7 @@
 
 namespace Differ\Tests;
 
+use ErrorException;
 use PHPUnit\Framework\TestCase;
 
 use function Differ\Formatters\getJsonFormatOutput;
@@ -35,23 +36,6 @@ use function Differ\Parsers\getParsedData;
  */
 class DifferTest extends TestCase
 {
-    /**
-     * Method test function genDiff with Json files
-     *
-     * @return string
-     */
-    public function testDiffForSimpleJsonFiles()
-    {
-        $pathToFile1 = __DIR__ . '/fixtures/before.json';
-        $pathToFile2 = __DIR__ . '/fixtures/after.json';
-        $format = 'pretty';
-
-        $expected = genDiff($pathToFile1, $pathToFile2, $format);
-        $actual = file_get_contents(__DIR__ . '/fixtures/pretty_simple_result');
-
-        $this->assertEquals($expected, $actual);
-    }
-
     /**
      * Method test function genDiff with Yaml files
      *
@@ -255,5 +239,20 @@ class DifferTest extends TestCase
         $actual = file_get_contents(__DIR__ . '/fixtures/result_tree.json');
 
         $this->assertEquals($expected, $actual);
+    }
+
+    /**
+     * Function test wrong format
+     * 
+     * @return void
+     */
+    public function testWrongOutputFormat()
+    {
+        $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
+        $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
+        $format = 'txt';
+
+        $this->expectException(ErrorException::class);
+        genDiff($pathToFile1, $pathToFile2, $format);
     }
 }

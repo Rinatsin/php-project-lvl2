@@ -15,6 +15,7 @@
 namespace Differ;
 
 use Error;
+use ErrorException;
 
 use function Differ\Formatters\getJsonFormatOutput;
 use function Differ\Formatters\getPlainFormatOutput;
@@ -49,7 +50,7 @@ function genDiff($pathToFile1, $pathToFile2, $format)
             $result = getJsonFormatOutput($ast);
             break;
         default:
-            throw new Error("Unknown output format: {$format}");
+            throw new ErrorException("Unknown output format: {$format}");
     }
     
     return $result;
