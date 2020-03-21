@@ -249,11 +249,9 @@ class DifferTest extends TestCase
     {
         $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
         $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
-        $parsedData1 = getParsedData($pathToFile1);
-        $parsedData2 = getParsedData($pathToFile2);
+        $format = 'json';
 
-        $ast = getAst($parsedData1, $parsedData2);
-        $expected = getJsonFormatOutput($ast);
+        $expected = genDiff($pathToFile1, $pathToFile2, $format);
         $actual = file_get_contents(__DIR__ . '/fixtures/result_tree.json');
 
         $this->assertEquals($expected, $actual);
