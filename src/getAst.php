@@ -65,13 +65,13 @@ function buildAst2($before, $after)
                             $iAcc[] = createNode($key, '- ', 'leaf', $before[$key], []);
                         }
                     }
-                } elseif (isset($before[$key]) && !isset($after[$key])) {
+                } elseif (isset($before[$key])) {
                     if (is_array($before[$key])) {
                         $iAcc[] = createNode($key, '- ', 'node', $before[$key], []);
                     } else {
                         $iAcc[] = createNode($key, '- ', 'leaf', $before[$key], []);
                     }
-                } elseif (!isset($before[$key]) && isset($after[$key])) {
+                } elseif (isset($after[$key])) {
                     if (is_array($after[$key])) {
                         $iAcc[] = createNode($key, '+ ', 'node', $after[$key], []);
                     } else {
