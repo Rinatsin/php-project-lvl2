@@ -28,7 +28,7 @@ use function Funct\Invoke\ifIsset;
  */
 function getAst($before, $after)
 {
-    $result = buildAst2($before, $after);
+    $result = buildAst($before, $after);
     return $result;
 }
 
@@ -40,7 +40,7 @@ function getAst($before, $after)
  *
  * @return array return ast
  */
-function buildAst2($before, $after)
+function buildAst($before, $after)
 {
     $keys = union(array_keys($before), array_keys($after));
 

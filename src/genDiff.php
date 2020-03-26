@@ -33,10 +33,14 @@ use function Differ\Parsers\getParsedData;
  */
 function genDiff($pathToFile1, $pathToFile2, $format)
 {
-    //Получаем данные из файлов
-    $dataFromFile1 = getParsedData($pathToFile1);
-    $dataFromFile2 = getParsedData($pathToFile2);
-    $ast = getAst($dataFromFile1, $dataFromFile2);
+    //Получаем данные из файлов$
+    $pathParts1 = pathinfo($pathToFile1);
+    $pathParts2 = pathinfo($pathToFile2);
+    $dataFromFile1 = file_get_contents($pathToFile1);
+    $dataFromFile2 = file_get_contents($pathToFile2);
+    $parsedData1 = getParsedData($dataFromFile1, $pathParts1['extension']);
+    $parsedData2 = getParsedData($dataFromFile2, $pathParts2['extension']);
+    $ast = getAst($parsedData1, $parsedData2);
     $result = '';
 
     switch ($format) {

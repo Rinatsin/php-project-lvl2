@@ -23,17 +23,16 @@ use function Funct\Strings\endsWith;
 /**
  * Function parse data
  *
- * @param string $pathToFile file to compare
+ * @param string $data      data to compare
+ * @param string $extension file extension for change parser
  *
  * @return array
  */
-function getParsedData($pathToFile)
+function getParsedData($data, $extension)
 {
     $result = [];
-    $data = file_get_contents($pathToFile);
-    $pathParts = pathinfo($pathToFile);
 
-    switch ($pathParts['extension']) {
+    switch ($extension) {
         case 'yml':
             $result = parseYaml($data);
             break;
@@ -41,7 +40,7 @@ function getParsedData($pathToFile)
             $result = parseJson($data);
             break;
         default:
-            throw new ErrorException("Unknown file extension: {$pathParts['extension']}");
+            throw new ErrorException("Unknown file extension: {$extension}");
     }
 
     return $result;

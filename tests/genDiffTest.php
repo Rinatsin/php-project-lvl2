@@ -36,34 +36,23 @@ use function Differ\Parsers\getParsedData;
  */
 class DifferTest extends TestCase
 {
-    /**
-     * Method test function genDiff with Yaml files
-     *
-     * @return string
-     */
-    public function testDiffForSimpleYmlFiles()
-    {
-        $pathToFile1 = __DIR__ . '/fixtures/before.yml';
-        $pathToFile2 = __DIR__ . '/fixtures/after.yml';
-        $format = 'pretty';
-
-        $expected = genDiff($pathToFile1, $pathToFile2, $format);
-        $actual = file_get_contents(__DIR__ . '/fixtures/pretty_simple_result');
-
-        $this->assertEquals($expected, $actual);
-    }
 
     /**
-     * Method test function genDiff with Yaml files
+     * Method test function which build AST
      *
-     * @return string
+     * @return array
      */
     public function testInnerView()
     {
         $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
         $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
-        $parsedData1 = getParsedData($pathToFile1);
-        $parsedData2 = getParsedData($pathToFile2);
+        $pathParts1 = pathinfo($pathToFile1);
+        $pathParts2 = pathinfo($pathToFile2);
+        $dataFromFile1 = file_get_contents($pathToFile1);
+        $dataFromFile2 = file_get_contents($pathToFile2);
+        $parsedData1 = getParsedData($dataFromFile1, $pathParts1['extension']);
+        $parsedData2 = getParsedData($dataFromFile2, $pathParts2['extension']);
+
 
         $expected = getAst($parsedData1, $parsedData2);
         $actual = [
