@@ -1,8 +1,8 @@
 [
 {"common":[
-{"setting1":"Value 1","state":"no changed"},
+{"setting1":"Value 1","state":"not_change"},
 {"setting2":"200","state":"deleted"},
-{"setting3":true,"state":"no changed"},
+{"setting3":true,"state":"not_change"},
 {"setting6":{"key":"value"},
 "state":"deleted"},
 {"setting4":"blah blah","state":"added"},
@@ -12,7 +12,7 @@
 {"group1":[
 {"baz":"bars","state":"added"},
 {"baz":"bas","state":"deleted"},
-{"foo":"bar","state":"no changed"}
+{"foo":"bar","state":"not_change"}
 ]},
 {"group2":{"abc":"12345"},
 "state":"deleted"},

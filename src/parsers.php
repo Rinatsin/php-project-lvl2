@@ -18,8 +18,6 @@ use Error;
 use ErrorException;
 use Symfony\Component\Yaml\Yaml;
 
-use function Funct\Strings\endsWith;
-
 /**
  * Function parse data
  *
@@ -40,7 +38,7 @@ function getParsedData($data, $extension)
             $result = parseJson($data);
             break;
         default:
-            throw new ErrorException("Unknown file extension: {$extension}");
+            throw new ErrorException("Wrong Data Type: {$extension}");
     }
 
     return $result;

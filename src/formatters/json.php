@@ -50,19 +50,7 @@ function renderTreeToJson($ast)
             );
             return [$node['name'] => $mapped];
         }
-        $state = '';
-        switch ($node['state']) {
-            case '  ':
-                $state = 'no changed';
-                break;
-            case '+ ':
-                $state = 'added';
-                break;
-            case '- ':
-                $state = 'deleted';
-                break;
-        }
-        return [$node['name'] => $node['value'], "state" => $state];
+        return [$node['name'] => $node['value'], "state" => $node['state']];
     };
 
     return array_reduce(

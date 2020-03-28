@@ -56,8 +56,8 @@ function renderTreeToPlain($ast)
         if (contains($acc, $path)) {
             return $acc;
         } else {
-            $delValue = findWhere($parent, ['name' => $node['name'], 'state' => '- ']);
-            $addValue = findWhere($parent, ['name' => $node['name'], 'state' => '+ ']);
+            $delValue = findWhere($parent, ['name' => $node['name'], 'state' => 'deleted']);
+            $addValue = findWhere($parent, ['name' => $node['name'], 'state' => 'added']);
             if (isset($delValue) && isset($addValue)) {
                 $acc .= "Property '{$path}' was changed. ";
                 $acc .= "From ";
@@ -71,11 +71,11 @@ function renderTreeToPlain($ast)
 
 
         switch ($node['state']) {
-            case '- ':
+            case 'deleted':
                 $acc .= "Property '{$path}' was removed\n";
                 return $acc;
                 break;
-            case '+ ':
+            case 'added':
                 $acc .= "Property '{$path}' was added with value: ";
                 $newValue = boolToString($node['value']);
                 $acc .= isComplex($newValue);

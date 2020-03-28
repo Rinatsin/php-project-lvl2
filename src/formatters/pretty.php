@@ -14,6 +14,8 @@
 
 namespace Differ\Formatters;
 
+use ErrorException;
+
 /**
  * Function rendering parse tree
  *
@@ -49,7 +51,8 @@ function renderTreeToPretty($tree)
             if ($node['type'] === 'node') {
                 $jsonView = json_encode($node['value']);
                 $strView = str_replace(['{"', '":"', '","', '"}'], ['', ': ', "\n{$depthToSpace}"], $jsonView);
-                $acc .= "{$depthToSpace}{$node['state']}{$node['name']}: {\n";
+                $state = renderState($node['state']);
+                $acc .= "{$depthToSpace}{$state}{$node['name']}: {\n";
                 $depthToSpace .= '  ';
                 $acc .= "{$depthToSpace}    {$strView}\n{$depthToSpace}}\n";
                 //если потомков больше нет то ставим закрывающую скобку
@@ -70,8 +73,8 @@ function renderTreeToPretty($tree)
                         break;
                 }
             }
-
-            $acc .= "{$depthToSpace}{$node['state']}{$node['name']}: {$node['value']}\n";
+            $state = renderState($node['state']);
+            $acc .= "{$depthToSpace}{$state}{$node['name']}: {$node['value']}\n";
 
             if ($childrenCount === 0) {
                 $depthToSpace = '  ';
@@ -104,4 +107,32 @@ function renderTreeToPretty($tree)
         },
         ''
     );
+}
+
+/**
+ * Function rendering key state
+ * 
+ * @param string $state state of node AST
+ * 
+ * @return string rendered state
+ */
+function renderState($state)
+{
+    //$renderedState = '';
+
+    switch ($state) {
+        case 'deleted':
+            $renderedState = '- ';
+            break;
+        case 'added':
+            $renderedState = '+ ';
+            break;
+        case 'not_change':
+            $renderedState = '  ';
+            break;
+        default:
+            throw new ErrorException('Unknown state of node');
+    }
+
+    return $renderedState;
 }

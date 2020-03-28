@@ -14,23 +14,7 @@
 
  namespace Differ;
 
-use function Differ\Parsers\parse;
 use function Funct\Collection\union;
-use function Funct\Invoke\ifIsset;
-
-/**
- * Function compare two files and return their difference
- *
- * @param string $before file to compare one
- * @param string $after  file to compare two
- *
- * @return array
- */
-function getAst($before, $after)
-{
-    $result = buildAst($before, $after);
-    return $result;
-}
 
 /**
  * Function build ast
@@ -59,23 +43,23 @@ function buildAst($before, $after)
                         $iAcc[] = createNode($key, 'changed', 'node', '', $childs);
                     } else {
                         if ($before[$key] === $after[$key]) {
-                            $iAcc[] = createNode($key, '  ', 'leaf', $before[$key], []);
+                            $iAcc[] = createNode($key, 'not_change', 'leaf', $before[$key], []);
                         } else {
-                            $iAcc[] = createNode($key, '+ ', 'leaf', $after[$key], []);
-                            $iAcc[] = createNode($key, '- ', 'leaf', $before[$key], []);
+                            $iAcc[] = createNode($key, 'added', 'leaf', $after[$key], []);
+                            $iAcc[] = createNode($key, 'deleted', 'leaf', $before[$key], []);
                         }
                     }
                 } elseif (isset($before[$key])) {
                     if (is_array($before[$key])) {
-                        $iAcc[] = createNode($key, '- ', 'node', $before[$key], []);
+                        $iAcc[] = createNode($key, 'deleted', 'node', $before[$key], []);
                     } else {
-                        $iAcc[] = createNode($key, '- ', 'leaf', $before[$key], []);
+                        $iAcc[] = createNode($key, 'deleted', 'leaf', $before[$key], []);
                     }
                 } elseif (isset($after[$key])) {
                     if (is_array($after[$key])) {
-                        $iAcc[] = createNode($key, '+ ', 'node', $after[$key], []);
+                        $iAcc[] = createNode($key, 'added', 'node', $after[$key], []);
                     } else {
-                        $iAcc[] = createNode($key, '+ ', 'leaf', $after[$key], []);
+                        $iAcc[] = createNode($key, 'added', 'leaf', $after[$key], []);
                     }
                 }
                 return $iAcc;

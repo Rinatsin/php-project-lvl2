@@ -14,7 +14,6 @@
 
 namespace Differ;
 
-use Error;
 use ErrorException;
 
 use function Differ\Formatters\getJsonFormatOutput;
@@ -40,7 +39,7 @@ function genDiff($pathToFile1, $pathToFile2, $format)
     $dataFromFile2 = file_get_contents($pathToFile2);
     $parsedData1 = getParsedData($dataFromFile1, $pathParts1['extension']);
     $parsedData2 = getParsedData($dataFromFile2, $pathParts2['extension']);
-    $ast = getAst($parsedData1, $parsedData2);
+    $ast = buildAst($parsedData1, $parsedData2);
     $result = '';
 
     switch ($format) {

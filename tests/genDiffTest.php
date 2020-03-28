@@ -17,6 +17,7 @@ namespace Differ\Tests;
 use ErrorException;
 use PHPUnit\Framework\TestCase;
 
+use function Differ\buildAst;
 use function Differ\Formatters\getJsonFormatOutput;
 use function Differ\Formatters\getPlainFormatOutput;
 use function Differ\Formatters\getPrettyFormatOutput;
@@ -54,7 +55,7 @@ class DifferTest extends TestCase
         $parsedData2 = getParsedData($dataFromFile2, $pathParts2['extension']);
 
 
-        $expected = getAst($parsedData1, $parsedData2);
+        $expected = buildAst($parsedData1, $parsedData2);
         $actual = [
             [
                 "name" => "common",
@@ -64,28 +65,28 @@ class DifferTest extends TestCase
                 "children" => [
                     [
                         "name" => "setting1",
-                        "state" => "  ",
+                        "state" => "not_change",
                         "type" => "leaf",
                         "value" => "Value 1",
                         "children" => []
                     ],
                     [
                         "name" => "setting2",
-                        "state" => "- ",
+                        "state" => "deleted",
                         "type" => "leaf",
                         "value" => "200",
                         "children" => []
                     ],
                     [
                         "name" => "setting3",
-                        "state" => "  ",
+                        "state" => "not_change",
                         "type" => "leaf",
                         "value" => true,
                         "children" => []
                     ],
                     [
                         "name" => "setting6",
-                        "state" => "- ",
+                        "state" => "deleted",
                         "type" => "node",
                         "value" => [
                             "key" => "value"
@@ -94,14 +95,14 @@ class DifferTest extends TestCase
                     ],
                     [
                         "name" => "setting4",
-                        "state" => "+ ",
+                        "state" => "added",
                         "type" => "leaf",
                         "value" => "blah blah",
                         "children" => []
                     ],
                     [
                         "name" => "setting5",
-                        "state" => "+ ",
+                        "state" => "added",
                         "type" => "node",
                         "value" => [
                             "key5" => "value5"
@@ -118,21 +119,21 @@ class DifferTest extends TestCase
                 "children" => [
                     [
                         "name" => "baz",
-                        "state" => "+ ",
+                        "state" => "added",
                         "type" => "leaf",
                         "value" => "bars",
                         "children" => []
                     ],
                     [
                         "name" => "baz",
-                        "state" => "- ",
+                        "state" => "deleted",
                         "type" => "leaf",
                         "value" => "bas",
                         "children" => []
                     ],
                     [
                         "name" => "foo",
-                        "state" => "  ",
+                        "state" => "not_change",
                         "type" => "leaf",
                         "value" => "bar",
                         "children" => []
@@ -141,7 +142,7 @@ class DifferTest extends TestCase
                 ],
                 [
                     "name" => "group2",
-                    "state" => "- ",
+                    "state" => "deleted",
                     "type" => "node",
                     "value" => [
                         "abc" => "12345"
@@ -150,7 +151,7 @@ class DifferTest extends TestCase
                 ],
                 [
                     "name" => "group3",
-                    "state" => "+ ",
+                    "state" => "added",
                     "type" => "node",
                     "value" => [
                         "fee" => "100500"
@@ -163,71 +164,30 @@ class DifferTest extends TestCase
     }
 
     /**
-     * Method test function renderAst
-     *
-     * @return void
+     * @dataProvider additionProvider
      */
-    public function testPrettyFormatRender()
+    public function testFormatters($actual, $pathToFile1, $pathToFile2, $format)
     {
-        $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
-        $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
-        $format = 'pretty';
-
-        $actual = file_get_contents(__DIR__ . '/fixtures/pretty_nested_result');
-        $expected = genDiff($pathToFile1, $pathToFile2, $format);
-        
-        $this->assertEquals($expected, $actual);
+        $this->assertEquals($actual, genDiff($pathToFile1, $pathToFile2, $format));
     }
 
     /**
-     * Method test function renderAst
-     *
+     * Provide data to test
+     * 
      * @return void
      */
-    public function testPlainFormatterWithNestedStructure()
+    public function additionProvider()
     {
+        $ActualPretty = file_get_contents(__DIR__ . '/fixtures/pretty_nested_result');
+        $ActualPlain = file_get_contents(__DIR__ . '/fixtures/plain_nested_result');
+        $ActualJson = file_get_contents(__DIR__ . '/fixtures/result_tree.json');
         $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
         $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
-        $format = 'plain';
-
-        $actual = file_get_contents(__DIR__ . '/fixtures/plain_nested_result');
-        $expected = genDiff($pathToFile1, $pathToFile2, $format);
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * Method test simple files for plain format output
-     *
-     * @return void
-     */
-    public function testPlainFormatterWithSimpleFiles()
-    {
-        $pathToFile1 = __DIR__ . '/fixtures/before.yml';
-        $pathToFile2 = __DIR__ . '/fixtures/after.yml';
-        $format = 'plain';
-
-        $actual = file_get_contents(__DIR__ . '/fixtures/plain_simple_result');
-        $expected = genDiff($pathToFile1, $pathToFile2, $format);
-
-        $this->assertEquals($expected, $actual);
-    }
-
-    /**
-     * Method test diff output between two files in json format
-     *
-     * @return void
-     */
-    public function testJsonFormatOutput()
-    {
-        $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
-        $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
-        $format = 'json';
-
-        $expected = genDiff($pathToFile1, $pathToFile2, $format);
-        $actual = file_get_contents(__DIR__ . '/fixtures/result_tree.json');
-
-        $this->assertEquals($expected, $actual);
+        return [
+            [$ActualPretty, $pathToFile1, $pathToFile2, 'pretty'],
+            [$ActualPlain, $pathToFile1, $pathToFile2, 'plain'],
+            [$ActualJson, $pathToFile1, $pathToFile2, 'json'],
+        ];
     }
 
     /**
@@ -250,7 +210,7 @@ class DifferTest extends TestCase
      *
      * @return void
      */
-    public function testWrongExtension()
+    public function testWrongDataType()
     {
         $pathToFile1 = __DIR__ . '/fixtures/wrong_extension.txt';
         $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
