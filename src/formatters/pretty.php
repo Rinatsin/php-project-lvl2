@@ -111,9 +111,9 @@ function renderTreeToPretty($tree)
 
 /**
  * Function rendering key state
- * 
+ *
  * @param string $state state of node AST
- * 
+ *
  * @return string rendered state
  */
 function renderState($state)

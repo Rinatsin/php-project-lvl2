@@ -173,7 +173,7 @@ class DifferTest extends TestCase
 
     /**
      * Provide data to test
-     * 
+     *
      * @return void
      */
     public function additionProvider()
