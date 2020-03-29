@@ -16,7 +16,6 @@
 
 use function Funct\Collection\union;
 
-
 /**
  * Function create new node
  *
