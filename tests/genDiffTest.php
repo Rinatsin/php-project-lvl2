@@ -18,6 +18,7 @@ use ErrorException;
 use PHPUnit\Framework\TestCase;
 
 use function Differ\buildAst;
+use function Differ\buildAstTree;
 use function Differ\Formatters\getJsonFormatOutput;
 use function Differ\Formatters\getPlainFormatOutput;
 use function Differ\Formatters\getPrettyFormatOutput;
@@ -55,7 +56,7 @@ class DifferTest extends TestCase
         $parsedData2 = getParsedData($dataFromFile2, $pathParts2['extension']);
 
 
-        $expected = buildAst($parsedData1, $parsedData2);
+        $expected = buildAstTree($parsedData1, $parsedData2);
         $actual = [
             [
                 "name" => "common",
