@@ -27,14 +27,14 @@ use function Funct\Collection\union;
  *
  * @return array return node of ast
  */
-function createNode($name, $state, $type, $value, $childs)
+function createNode($name, $state, $type, $value, $children)
 {
     return [
       'name' => $name,
       'state' => $state,
       'type' => $type,
       'value' => $value,
-      'children' => $childs
+      'children' => $children
     ];
 }
 
@@ -55,8 +55,8 @@ function buildAstTree($before, $after)
             function ($iAcc, $key) use ($before, $after, &$iter) {
                 if (isset($before[$key]) && isset($after[$key])) {
                     if (is_array($before[$key]) && is_array($after[$key])) {
-                        $childs = $iter($before[$key], $after[$key], []);
-                        $iAcc[] = createNode($key, 'changed', 'node', '', $childs);
+                        $children = $iter($before[$key], $after[$key], []);
+                        $iAcc[] = createNode($key, 'changed', 'node', '', $children);
                     } else {
                         if ($before[$key] === $after[$key]) {
                             $iAcc[] = createNode($key, 'not_change', 'leaf', $before[$key], []);
