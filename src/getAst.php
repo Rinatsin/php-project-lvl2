@@ -17,28 +17,6 @@
 use function Funct\Collection\union;
 
 /**
- * Function create new node
- *
- * @param string $name   node name
- * @param string $state  node state (added, deleted or no changed)
- * @param string $type   node type (node or leaf)
- * @param string $value  node value
- * @param array  $childs childs current node
- *
- * @return array return node of ast
- */
-function createNode($name, $state, $type, $value, $children)
-{
-    return [
-      'name' => $name,
-      'state' => $state,
-      'type' => $type,
-      'value' => $value,
-      'children' => $children
-    ];
-}
-
-/**
  * Function build ast
  *
  * @param array $before first file to diff
@@ -56,19 +34,55 @@ function buildAstTree($before, $after)
                 if (isset($before[$key]) && isset($after[$key])) {
                     if (is_array($before[$key]) && is_array($after[$key])) {
                         $children = $iter($before[$key], $after[$key], []);
-                        $iAcc[] = createNode($key, 'changed', 'node', '', $children);
+                        $iAcc[] = [
+                            'name' => $key,
+                            'state' => 'changed',
+                            'type' => 'node',
+                            'value' => '',
+                            'children' => $children
+                          ];
                     } else {
                         if ($before[$key] === $after[$key]) {
-                            $iAcc[] = createNode($key, 'not_change', 'leaf', $before[$key], []);
+                            $iAcc[] = [
+                                'name' => $key,
+                                'state' => 'not_change',
+                                'type' => 'leaf',
+                                'value' => $before[$key],
+                                'children' => []
+                              ];
                         } else {
-                            $iAcc[] = createNode($key, 'added', 'leaf', $after[$key], []);
-                            $iAcc[] = createNode($key, 'deleted', 'leaf', $before[$key], []);
+                            $iAcc[] = [
+                                'name' => $key,
+                                'state' => 'added',
+                                'type' => 'leaf',
+                                'value' => $after[$key],
+                                'children' => []
+                              ];
+                            $iAcc[] = [
+                                'name' => $key,
+                                'state' => 'deleted',
+                                'type' => 'leaf',
+                                'value' => $before[$key],
+                                'children' => []
+                              ];
                         }
                     }
                 } elseif (isset($before[$key])) {
-                    $iAcc[] = createNode($key, 'deleted', 'leaf', $before[$key], []);
+                    $iAcc[] = [
+                        'name' => $key,
+                        'state' => 'deleted',
+                        'type' => 'leaf',
+                        'value' => $before[$key],
+                        'children' => []
+                      ];
                 } elseif (isset($after[$key])) {
-                    $iAcc[] = createNode($key, 'added', 'leaf', $after[$key], []);
+                    $iAcc[] = [
+                        'name' => $key,
+                        'state' => 'added',
+                        'type' => 'leaf',
+                        'value' => $after[$key],
+                        'children' => []
+                      ];
                 }
                 return $iAcc;
             },
