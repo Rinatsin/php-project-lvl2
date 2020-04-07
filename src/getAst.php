@@ -66,17 +66,9 @@ function buildAstTree($before, $after)
                         }
                     }
                 } elseif (isset($before[$key])) {
-                    if (is_array($before[$key])) {
-                        $iAcc[] = createNode($key, 'deleted', 'node', $before[$key], []);
-                    } else {
-                        $iAcc[] = createNode($key, 'deleted', 'leaf', $before[$key], []);
-                    }
+                    $iAcc[] = createNode($key, 'deleted', 'leaf', $before[$key], []);
                 } elseif (isset($after[$key])) {
-                    if (is_array($after[$key])) {
-                        $iAcc[] = createNode($key, 'added', 'node', $after[$key], []);
-                    } else {
-                        $iAcc[] = createNode($key, 'added', 'leaf', $after[$key], []);
-                    }
+                    $iAcc[] = createNode($key, 'added', 'leaf', $after[$key], []);
                 }
                 return $iAcc;
             },

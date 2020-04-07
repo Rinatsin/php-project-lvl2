@@ -30,86 +30,6 @@ function getPrettyFormatOutput($tree)
 }
 
 /**
- * Function rendering parse tree
- *
- * @param array $tree file to compare one
- *
- * @return string
- */
-function renderTreeToPretty($tree)
-{
-    $childrenCount = null;
-
-    $iter = function ($node, $depthToSpace, &$childrenCount, $acc) use (&$iter) {
-        $children = $node['children'] ??  null;
-        //если детей нет
-        if (!$children) {
-            if (isset($childrenCount)) {
-                $childrenCount = $childrenCount - 1;
-            }
-            //если значение массив и нет потомков то добавляем как есть
-            if ($node['type'] === 'node') {
-                $jsonView = json_encode($node['value']);
-                $strView = str_replace(['{"', '":"', '","', '"}'], ['', ': ', "\n{$depthToSpace}"], $jsonView);
-                $state = renderState($node['state']);
-                $acc .= "{$depthToSpace}{$state}{$node['name']}: {\n";
-                $depthToSpace .= '  ';
-                $acc .= "{$depthToSpace}    {$strView}\n{$depthToSpace}}\n";
-                //если потомков больше нет то ставим закрывающую скобку
-                if ($childrenCount === 0) {
-                    $depthToSpace = '  ';
-                    $acc .= "  {$depthToSpace}}\n";
-                }
-                return $acc;
-            }
-            
-            if (is_bool($node['value'])) {
-                switch ($node['value']) {
-                    case true:
-                        $node['value'] = 'true';
-                        break;
-                    case false:
-                        $node['value'] = 'false';
-                        break;
-                }
-            }
-            $state = renderState($node['state']);
-            $acc .= "{$depthToSpace}{$state}{$node['name']}: {$node['value']}\n";
-
-            if ($childrenCount === 0) {
-                $depthToSpace = '  ';
-                $acc .= "  {$depthToSpace}}\n";
-            }
-            return $acc;
-        }
-
-        if (!isset($childrenCount)) {
-            $childrenCount = count($children);
-        }
-
-        $acc .= "{$depthToSpace}  {$node['name']}: {\n";
-
-        return array_reduce(
-            $children,
-            function ($cAcc, $n) use (&$iter, $depthToSpace, &$childrenCount) {
-                $depthToSpace .= '    ';
-                return $iter($n, $depthToSpace, $childrenCount, $cAcc);
-            },
-            $acc
-        );
-    };
-
-    return array_reduce(
-        $tree,
-        function ($iAcc, $iNode) use (&$iter, $childrenCount) {
-            $iAcc .= $iter($iNode, '  ', $childrenCount, '');
-            return $iAcc;
-        },
-        ''
-    );
-}
-
-/**
  * Function rendering key state
  *
  * @param string $state state of node AST
@@ -135,4 +55,74 @@ function renderState($state)
     }
 
     return $renderedState;
+}
+
+/**
+ * Function rendering tree
+ *
+ * @param array $ast Abstract syntax Tree
+ *
+ * @return string
+ */
+function renderTreeToPretty($ast)
+{
+    $childrenCount = null;
+
+    $iter = function ($node, $depthToSpace, &$childrenCount, $acc) use (&$iter) {
+        $children = $node['children'] ?? null;
+        //Если у узла есть потомки то рекурсивно обрабатываем их
+        if ($children) {
+            //если количество потомков не установлено то устанавливаем
+            if (!isset($childrenCount)) {
+                $childrenCount = count($children);
+            }
+            $acc .= "{$depthToSpace}  {$node['name']}: {\n";
+            return array_reduce(
+                $children,
+                function ($cAcc, $cNode) use (&$iter, $depthToSpace, &$childrenCount) {
+                    $depthToSpace .= '    ';
+                    return $iter($cNode, $depthToSpace, $childrenCount, $cAcc);
+                },
+                $acc
+            );
+        }
+        //Если есть потомки, то уменьшаем их количество на одного
+        if (isset($childrenCount)) {
+            $childrenCount = $childrenCount - 1;
+        }
+        //Если потомков нет и значение ноды массив
+        if (is_array($node['value'])) {
+            $jsonView = json_encode($node['value']);
+            $strView = str_replace(['{"', '":"', '","', '"}'], ['', ': ', "\n{$depthToSpace}"], $jsonView);
+            $state = renderState($node['state']);
+            $acc .= "{$depthToSpace}{$state}{$node['name']}: {\n";
+            $depthToSpace .= '  ';
+            $acc .= "{$depthToSpace}    {$strView}\n{$depthToSpace}}\n";
+            //если потомков больше нет то ставим закрывающую скобку
+            if ($childrenCount === 0) {
+                $depthToSpace = '  ';
+                $acc .= "  {$depthToSpace}}\n";
+            }
+            return $acc;
+        }
+        // Если потомков нет и значение узла не массив
+        $newBoolValue = boolToString($node['value']);
+        $state = renderState($node['state']);
+        $acc .= "{$depthToSpace}{$state}{$node['name']}: {$newBoolValue}\n";
+        // если больше потомков нет то уменьшаем отступ и ставим закрывающую скобку
+        if ($childrenCount === 0) {
+            $depthToSpace = '  ';
+            $acc .= "  {$depthToSpace}}\n";
+        }
+        return $acc;
+    };
+
+    return array_reduce(
+        $ast,
+        function ($iAcc, $iNode) use (&$iter, $childrenCount) {
+            $iAcc .= $iter($iNode, '  ', $childrenCount, '');
+            return $iAcc;
+        },
+        ''
+    );
 }
