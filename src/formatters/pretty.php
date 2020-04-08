@@ -41,6 +41,12 @@ function renderState($state)
     //$renderedState = '';
 
     switch ($state) {
+        case 'changed_from':
+            $renderedState = '- ';
+            break;
+        case 'changed_to':
+            $renderedState = '+ ';
+            break;
         case 'deleted':
             $renderedState = '- ';
             break;

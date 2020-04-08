@@ -30,82 +30,6 @@ function getPlainFormatOutput($ast)
 }
 
 /**
- * Function rendering AST (Abstract syntax tree)
- *
- * @param array $ast abstract syntax tree
- *
- * @return string return diff between two files in plain format
- */
-function renderTreeToPlain($ast)
-{
-    $iter = function ($node, $path, $acc, $parent) use (&$iter) {
-        $children = $node['children'] ?? null;
-
-        if ($children) {
-            $path = "{$node['name']}.";
-            return array_reduce(
-                $children,
-                function ($iAcc, $n) use (&$iter, $path, $children) {
-                    return $iter($n, $path, $iAcc, $children);
-                },
-                $acc
-            );
-        }
-
-        $path .= "{$node['name']}";
-        if (contains($acc, $path)) {
-            return $acc;
-        } else {
-            $delValue = findWhere($parent, ['name' => $node['name'], 'state' => 'deleted']);
-            $addValue = findWhere($parent, ['name' => $node['name'], 'state' => 'added']);
-            if (isset($delValue) && isset($addValue)) {
-                $acc .= "Property '{$path}' was changed. ";
-                $acc .= "From ";
-                $acc .= isComplex($delValue['value']);
-                $acc .= " to ";
-                $acc .= isComplex($addValue['value']);
-                $acc .= "\n";
-                return $acc;
-            }
-        }
-
-
-        switch ($node['state']) {
-            case 'deleted':
-                $acc .= "Property '{$path}' was removed\n";
-                return $acc;
-                break;
-            case 'added':
-                $acc .= "Property '{$path}' was added with value: ";
-                $newValue = boolToString($node['value']);
-                $acc .= isComplex($newValue);
-                $acc .= "\n";
-                return $acc;
-                break;
-            default:
-                return $acc;
-                break;
-        }
-    };
-
-    return array_reduce(
-        $ast,
-        function ($nAcc, $nCurrent) use (&$iter, $ast) {
-            $temp = $iter($nCurrent, '', '', $ast);
-            if ($nAcc == '') {
-                $nAcc .= $iter($nCurrent, '', '', $ast);
-                return $nAcc;
-            }
-            if (!contains($nAcc, $temp)) {
-                $nAcc .= $iter($nCurrent, '', '', $ast);
-            }
-            return $nAcc;
-        },
-        ''
-    );
-}
-
-/**
  * Function check value is a complex structure
  *
  * @param mixed $value value to check
@@ -146,4 +70,66 @@ function boolToString($value)
     } else {
         return $value;
     }
+}
+
+/**
+ * Function rendering AST (Abstract syntax tree)
+ *
+ * @param array $ast abstract syntax tree
+ *
+ * @return string return diff between two files in plain format
+ */
+function renderTreeToPlain($ast)
+{
+    $iter = function ($node, $path, $acc) use (&$iter) {
+        $children = $node['children'] ?? null;
+
+        if ($children) {
+            $path = "{$node['name']}.";
+            return array_reduce(
+                $children,
+                function ($iAcc, $n) use (&$iter, $path) {
+                    return $iter($n, $path, $iAcc);
+                },
+                $acc
+            );
+        }
+
+        $path .= "{$node['name']}";
+
+        switch ($node['state']) {
+            case 'changed_from':
+                $acc .= "Property '{$path}' was changed. From ";
+                $newValue = boolToString($node['value']);
+                $acc .= isComplex($newValue);
+                break;
+            case 'changed_to':
+                $acc .= " to ";
+                $newValue = boolToString($node['value']);
+                $acc .= isComplex($newValue);
+                $acc .= "\n";
+                break;
+            case 'deleted':
+                $acc .= "Property '{$path}' was removed\n";
+                break;
+            case 'added':
+                $acc .= "Property '{$path}' was added with value: ";
+                $newValue = boolToString($node['value']);
+                $acc .= isComplex($newValue);
+                $acc .= "\n";
+                break;
+            default:
+                break;
+        }
+        return $acc;
+    };
+
+    return array_reduce(
+        $ast,
+        function ($nAcc, $nCurrent) use (&$iter, $ast) {
+                $nAcc .= $iter($nCurrent, '', '');
+            return $nAcc;
+        },
+        ''
+    );
 }

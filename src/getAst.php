@@ -53,16 +53,16 @@ function buildAstTree($before, $after)
                         } else {
                             $iAcc[] = [
                                 'name' => $key,
-                                'state' => 'added',
+                                'state' => 'changed_from',
                                 'type' => 'leaf',
-                                'value' => $after[$key],
+                                'value' => $before[$key],
                                 'children' => []
                               ];
                             $iAcc[] = [
                                 'name' => $key,
-                                'state' => 'deleted',
+                                'state' => 'changed_to',
                                 'type' => 'leaf',
-                                'value' => $before[$key],
+                                'value' => $after[$key],
                                 'children' => []
                               ];
                         }

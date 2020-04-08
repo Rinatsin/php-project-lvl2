@@ -10,8 +10,8 @@
 "state":"added"}
 ]},
 {"group1":[
-{"baz":"bars","state":"added"},
-{"baz":"bas","state":"deleted"},
+{"baz":"bas","state":"changed_from"},
+{"baz":"bars","state":"changed_to"},
 {"foo":"bar","state":"not_change"}
 ]},
 {"group2":{"abc":"12345"},
