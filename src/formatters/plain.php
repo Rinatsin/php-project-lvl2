@@ -14,21 +14,6 @@
 
  namespace Differ\Formatters;
 
-use function Funct\Collection\findWhere;
-use function Funct\Strings\contains;
-
-/**
- * Function rendering AST (Abstract syntax tree)
- *
- * @param array $ast abstract syntax tree
- *
- * @return string return diff between two files in plain format
- */
-function getPlainFormatOutput($ast)
-{
-    return renderTreeToPlain($ast);
-}
-
 /**
  * Function check value is a complex structure
  *
@@ -44,32 +29,6 @@ function isComplex($value)
         $result = "'{$value}'";
     }
     return $result;
-}
-
-/**
- * Function check the value is a bool
- *
- * @param bool $value Bool type value
- *
- * @return string
- */
-function boolToString($value)
-{
-    $newValue = '';
-
-    if (is_bool($value)) {
-        switch ($value) {
-            case true:
-                $newValue = 'true';
-                break;
-            case false:
-                $newValue = 'false';
-                break;
-        }
-        return $newValue;
-    } else {
-        return $value;
-    }
 }
 
 /**
@@ -96,16 +55,19 @@ function renderTreeToPlain($ast)
         }
 
         $path .= "{$node['name']}";
+        if (is_bool($node['value'])) {
+            $newValue = $node['value'] ? 'true' : 'false';
+        } else {
+            $newValue = $node['value'];
+        }
 
         switch ($node['state']) {
             case 'changed_from':
                 $acc .= "Property '{$path}' was changed. From ";
-                $newValue = boolToString($node['value']);
                 $acc .= isComplex($newValue);
                 break;
             case 'changed_to':
                 $acc .= " to ";
-                $newValue = boolToString($node['value']);
                 $acc .= isComplex($newValue);
                 $acc .= "\n";
                 break;
@@ -114,7 +76,6 @@ function renderTreeToPlain($ast)
                 break;
             case 'added':
                 $acc .= "Property '{$path}' was added with value: ";
-                $newValue = boolToString($node['value']);
                 $acc .= isComplex($newValue);
                 $acc .= "\n";
                 break;

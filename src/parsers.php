@@ -14,7 +14,6 @@
 
  namespace Differ\Parsers;
 
-use Error;
 use ErrorException;
 use Symfony\Component\Yaml\Yaml;
 

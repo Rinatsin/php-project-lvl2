@@ -19,6 +19,7 @@ use ErrorException;
 use function Differ\Formatters\getJsonFormatOutput;
 use function Differ\Formatters\getPlainFormatOutput;
 use function Differ\Formatters\getPrettyFormatOutput;
+use function Differ\Formatters\renderTreeToPlain;
 use function Differ\Parsers\getParsedData;
 
 /**
@@ -47,7 +48,7 @@ function genDiff($pathToFile1, $pathToFile2, $format)
             $result = getPrettyFormatOutput($ast);
             break;
         case 'plain':
-            $result = getPlainFormatOutput($ast);
+            $result = renderTreeToPlain($ast);
             break;
         case 'json':
             $result = getJsonFormatOutput($ast);

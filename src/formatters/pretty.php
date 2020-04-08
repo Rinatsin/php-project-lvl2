@@ -112,7 +112,11 @@ function renderTreeToPretty($ast)
             return $acc;
         }
         // Если потомков нет и значение узла не массив
-        $newBoolValue = boolToString($node['value']);
+        if (is_bool($node['value'])) {
+            $newBoolValue = $node['value'] ? 'true' : 'false';
+        } else {
+            $newBoolValue = $node['value'];
+        }
         $state = renderState($node['state']);
         $acc .= "{$depthToSpace}{$state}{$node['name']}: {$newBoolValue}\n";
         // если больше потомков нет то уменьшаем отступ и ставим закрывающую скобку
