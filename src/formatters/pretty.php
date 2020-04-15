@@ -56,10 +56,16 @@ function renderType($type)
 function arrayToString($data)
 {
     $keys = array_keys($data);
+    $countElements = count($keys);
     $resultString = array_reduce(
         $keys,
-        function ($acc, $key) use ($data) {
-            $acc .= "{$key}: {$data[$key]}";
+        function ($acc, $key) use ($data, &$countElements) {
+            if ($countElements > 1) {
+                $acc .= "{$key}: {$data[$key]},\n";
+            } else {
+                $acc .= "{$key}: {$data[$key]}";
+            }
+            $countElements--;
             return $acc;
         },
         ''
