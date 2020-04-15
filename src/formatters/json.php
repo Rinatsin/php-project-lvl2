@@ -15,49 +15,46 @@
  namespace Differ\Formatters;
 
 /**
- * Function get rendering ast and pass it to output
+ * Function rendering output between two files to json format
  *
- * @param array $ast rendered tree
+ * @param array $ast Abstract syntax tree to diff between two files
  *
  * @return json
  */
-function getJsonFormatOutput($ast)
-{
-    $renderedAst = renderTreeToJson($ast);
-    $json = json_encode($renderedAst);
-    $result = str_replace(["[", "},", "}]"], ["[\n", "},\n", "}\n]"], $json);
-    return $result;
-}
-
- /**
-  * Function rendering output between two files to json format
-  *
-  * @param array $ast Abstract syntax tree to diff between two files
-  *
-  * @return json
-  */
 function renderTreeToJson($ast)
 {
     $iter = function ($node) use (&$iter) {
-        $children = $node['children'] ?? null;
-
-        if ($children) {
-            $mapped = array_map(
-                function ($nNode) use (&$iter) {
-                    return $iter($nNode);
-                },
-                $children,
-            );
-            return [$node['name'] => $mapped];
+        switch ($node['type']) {
+            case 'nested':
+                $childrens = array_reduce(
+                    $node['children'],
+                    function ($iAcc, $iNode) use (&$iter) {
+                        $iAcc[] = $iter($iNode);
+                        return $iAcc;
+                    },
+                    []
+                );
+                return [$node['name'] => $childrens];
+                break;
+            case 'changed':
+                return[
+                    [$node['name'] => $node['beforeValue'], 'type' => $node['type']],
+                    [$node['name'] => $node['afterValue'], 'type' => $node['type']]
+                ];
+                break;
+            case 'added' || 'deleted' || 'no_change':
+                return [$node['name'] => $node['value'], "type" => $node['type']];
+                break;
         }
-        return [$node['name'] => $node['value'], "state" => $node['state']];
     };
-
-    return array_reduce(
-        $ast,
-        function ($iAcc, $iNode) use (&$iter) {
-            $iAcc[] = $iter($iNode);
-            return $iAcc;
-        }
+    return json_encode(
+        array_reduce(
+            $ast,
+            function ($nAcc, $nNode) use (&$iter) {
+                $nAcc[] = $iter($nNode);
+                return $nAcc;
+            },
+            []
+        )
     );
 }

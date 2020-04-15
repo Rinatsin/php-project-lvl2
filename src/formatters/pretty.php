@@ -16,51 +16,55 @@ namespace Differ\Formatters;
 
 use ErrorException;
 
-/**
- * Function rendering parse tree
- *
- * @param string $tree Ast tree
- *
- * @return string
- */
-function getPrettyFormatOutput($tree)
-{
-    $renderingData = renderTreeToPretty($tree);
-    return "{\n{$renderingData}}\n";
-}
+use function Differ\boolToString;
 
 /**
  * Function rendering key state
  *
- * @param string $state state of node AST
+ * @param string $type state of node AST
  *
  * @return string rendered state
  */
-function renderState($state)
+function renderType($type)
 {
-    //$renderedState = '';
+    $renderedType = '';
 
-    switch ($state) {
-        case 'changed_from':
-            $renderedState = '- ';
-            break;
-        case 'changed_to':
-            $renderedState = '+ ';
-            break;
+    switch ($type) {
         case 'deleted':
-            $renderedState = '- ';
+            $renderedType = '- ';
             break;
         case 'added':
-            $renderedState = '+ ';
+            $renderedType = '+ ';
             break;
         case 'not_change':
-            $renderedState = '  ';
+            $renderedType = '  ';
             break;
         default:
             throw new ErrorException('Unknown state of node');
     }
 
-    return $renderedState;
+    return $renderedType;
+}
+
+/**
+ * Function rendering array ti string
+ * 
+ * @param array $data array for rendering
+ * 
+ * @return string
+ */
+function arrayToString($data)
+{
+    $keys = array_keys($data);
+    $resultString = array_reduce(
+        $keys,
+        function ($acc, $key) use ($data) {
+            $acc .= "{$key}: {$data[$key]}";
+            return $acc;
+        },
+        ''
+    );
+    return $resultString;
 }
 
 /**
@@ -73,61 +77,53 @@ function renderState($state)
 function renderTreeToPretty($ast)
 {
     $childrenCount = null;
-
     $iter = function ($node, $depthToSpace, &$childrenCount, $acc) use (&$iter) {
-        $children = $node['children'] ?? null;
-        //Если у узла есть потомки то рекурсивно обрабатываем их
-        if ($children) {
-            //если количество потомков не установлено то устанавливаем
-            if (!isset($childrenCount)) {
-                $childrenCount = count($children);
-            }
-            $acc .= "{$depthToSpace}  {$node['name']}: {\n";
-            return array_reduce(
-                $children,
-                function ($cAcc, $cNode) use (&$iter, $depthToSpace, &$childrenCount) {
-                    $depthToSpace .= '    ';
-                    return $iter($cNode, $depthToSpace, $childrenCount, $cAcc);
-                },
-                $acc
-            );
-        }
-        //Если есть потомки, то уменьшаем их количество на одного
+        
         if (isset($childrenCount)) {
             $childrenCount = $childrenCount - 1;
         }
-        //Если потомков нет и значение ноды массив
-        if (is_array($node['value'])) {
-            $jsonView = json_encode($node['value']);
-            $strView = str_replace(['{"', '":"', '","', '"}'], ['', ': ', "\n{$depthToSpace}"], $jsonView);
-            $state = renderState($node['state']);
-            $acc .= "{$depthToSpace}{$state}{$node['name']}: {\n";
-            $depthToSpace .= '  ';
-            $acc .= "{$depthToSpace}    {$strView}\n{$depthToSpace}}\n";
-            //если потомков больше нет то ставим закрывающую скобку
-            if ($childrenCount === 0) {
-                $depthToSpace = '  ';
-                $acc .= "  {$depthToSpace}}\n";
-            }
-            return $acc;
+        switch ($node['type']) {
+            case 'nested':
+                $childrenCount = count($node['children']);
+                $acc .= "{$depthToSpace}  {$node['name']}: {\n";
+                return array_reduce(
+                    $node['children'],
+                    function ($cAcc, $cNode) use (&$iter, $depthToSpace, &$childrenCount) {
+                        $depthToSpace .= '    ';
+                        return $iter($cNode, $depthToSpace, $childrenCount, $cAcc);
+                    },
+                    $acc
+                );
+                break;
+            case 'changed':
+                $beforeValue = boolToString($node['beforeValue']);
+                $acc .= "{$depthToSpace}- {$node['name']}: {$beforeValue}\n";
+                $afterValue = boolToString($node['afterValue']);
+                $acc .= "{$depthToSpace}+ {$node['name']}: {$afterValue}\n";
+                break;
+            case 'added' || 'deleted' || 'no_change':
+                if (is_array($node['value'])) {
+                    $strView = arrayToString($node['value']);
+                    $type = renderType($node['type']);
+                    $acc .= "{$depthToSpace}{$type}{$node['name']}: {\n";
+                    $depthToSpace .= '  ';
+                    $acc .= "{$depthToSpace}    {$strView}\n{$depthToSpace}}\n";
+                } else {
+                    // Если потомков нет и значение узла не массив
+                    $newValue = boolToString($node['value']);
+                    $type = renderType($node['type']);
+                    $acc .= "{$depthToSpace}{$type}{$node['name']}: {$newValue}\n";
+                }
+                break;
         }
-        // Если потомков нет и значение узла не массив
-        if (is_bool($node['value'])) {
-            $newBoolValue = $node['value'] ? 'true' : 'false';
-        } else {
-            $newBoolValue = $node['value'];
-        }
-        $state = renderState($node['state']);
-        $acc .= "{$depthToSpace}{$state}{$node['name']}: {$newBoolValue}\n";
-        // если больше потомков нет то уменьшаем отступ и ставим закрывающую скобку
+        // если больше потомков нет то ставим закрывающую скобку
         if ($childrenCount === 0) {
             $depthToSpace = '  ';
             $acc .= "  {$depthToSpace}}\n";
         }
         return $acc;
     };
-
-    return array_reduce(
+    $renderingData = array_reduce(
         $ast,
         function ($iAcc, $iNode) use (&$iter, $childrenCount) {
             $iAcc .= $iter($iNode, '  ', $childrenCount, '');
@@ -135,4 +131,5 @@ function renderTreeToPretty($ast)
         },
         ''
     );
+    return "{\n{$renderingData}}\n";
 }

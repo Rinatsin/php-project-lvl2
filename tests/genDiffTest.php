@@ -16,7 +16,9 @@ namespace Differ\Tests;
 
 use PHPUnit\Framework\TestCase;
 
+use function Differ\buildAstTree;
 use function Differ\genDiff;
+use function Differ\Parsers\getParsedData;
 
 /**
  * Class includes tests for program gendiff
