@@ -140,7 +140,7 @@ function buildAstTree($before, $after)
             },
             $keys
         );
-        return $ast; 
+        return $ast;
     };
     return $iter($before, $after);
 }

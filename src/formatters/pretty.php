@@ -48,9 +48,9 @@ function renderType($type)
 
 /**
  * Function rendering array ti string
- * 
+ *
  * @param array $data array for rendering
- * 
+ *
  * @return string
  */
 function arrayToString($data)
@@ -101,7 +101,7 @@ function renderTreeToPretty($ast)
                 $afterValue = boolToString($node['afterValue']);
                 $acc .= "{$depthToSpace}+ {$node['name']}: {$afterValue}\n";
                 break;
-            case 'added' || 'deleted' || 'no_change':
+            case 'added' || 'deleted' || 'not_change':
                 if (is_array($node['value'])) {
                     $strView = arrayToString($node['value']);
                     $type = renderType($node['type']);

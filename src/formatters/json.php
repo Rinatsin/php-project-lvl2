@@ -42,7 +42,7 @@ function renderTreeToJson($ast)
                     [$node['name'] => $node['afterValue'], 'type' => $node['type']]
                 ];
                 break;
-            case 'added' || 'deleted' || 'no_change':
+            case 'added' || 'deleted' || 'not_change':
                 return [$node['name'] => $node['value'], "type" => $node['type']];
                 break;
         }
