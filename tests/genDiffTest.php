@@ -74,7 +74,7 @@ class DifferTest extends TestCase
     {
         $ActualPretty = $this->readFile('pretty_nested_result');
         $ActualPlain = $this->readFile('plain_nested_result');
-        $ActualJson = $this->readFile('result_tree.json');
+        $ActualJson = $this->readFile('json_nested_result.json');
         $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
         $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
         return [
