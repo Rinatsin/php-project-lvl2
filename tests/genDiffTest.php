@@ -75,12 +75,17 @@ class DifferTest extends TestCase
         $ActualPretty = $this->readFile('pretty_nested_result');
         $ActualPlain = $this->readFile('plain_nested_result');
         $ActualJson = $this->readFile('json_nested_result.json');
-        $pathToFile1 = __DIR__ . '/fixtures/beforeTree.json';
-        $pathToFile2 = __DIR__ . '/fixtures/afterTree.json';
+        $pathToJsonFile1 = __DIR__ . '/fixtures/beforeTree.json';
+        $pathToJsonFile2 = __DIR__ . '/fixtures/afterTree.json';
+        $pathToYamlFile1 = __DIR__ . '/fixtures/before.yml';
+        $pathToYamlFile2 = __DIR__ . '/fixtures/after.yml';
         return [
-            [$ActualPretty, $pathToFile1, $pathToFile2, 'pretty'],
-            [$ActualPlain, $pathToFile1, $pathToFile2, 'plain'],
-            [$ActualJson, $pathToFile1, $pathToFile2, 'json'],
+            [$ActualPretty, $pathToJsonFile1, $pathToJsonFile2, 'pretty'],
+            [$ActualPlain, $pathToJsonFile1, $pathToJsonFile2, 'plain'],
+            [$ActualJson, $pathToJsonFile1, $pathToJsonFile2, 'json'],
+            [$ActualPretty, $pathToYamlFile1, $pathToYamlFile2, 'pretty'],
+            [$ActualPlain, $pathToYamlFile1, $pathToYamlFile2, 'plain'],
+            [$ActualJson, $pathToYamlFile1, $pathToYamlFile2, 'json'],
         ];
     }
 }
