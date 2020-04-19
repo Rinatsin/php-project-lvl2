@@ -36,44 +36,35 @@ function isComplex($value)
 /**
  * Function rendering AST (Abstract syntax tree)
  *
- * @param array $ast abstract syntax tree
+ * @param array  $ast      abstract syntax tree
+ * @param string $pathRoot path root
  *
  * @return string return diff between two files in plain format
  */
-function renderTreeToPlain($ast)
+function renderTreeToPlain($ast, $pathRoot)
 {
-    $iter = function ($node, $path, $acc) use (&$iter) {
+    $iter = function ($node, $pathRoot, $acc) {
+        if (isset($pathRoot)) {
+            $pathParts[] = $pathRoot;
+        }
+        $pathParts[] = $node['name'];
+        $path = implode('.', $pathParts);
         switch ($node['type']) {
             case 'nested':
-                $path = "{$node['name']}.";
-                return array_reduce(
-                    $node['children'],
-                    function ($iAcc, $n) use (&$iter, $path) {
-                        return $iter($n, $path, $iAcc);
-                    },
-                    $acc
-                );
+                $pathRoot = $node['name'];
+                $acc = renderTreeToPlain($node['children'], $pathRoot);
                 break;
             case 'changed':
-                $path .= "{$node['name']}";
-                $beforeValue = boolToString($node['beforeValue']);
-                $afterValue = boolToString($node['afterValue']);
-                $acc .= "Property '{$path}' was changed. From ";
-                $acc .= isComplex($beforeValue);
-                $acc .= " to ";
-                $acc .= isComplex($afterValue);
-                $acc .= "\n";
+                $beforeValue = isComplex(boolToString($node['beforeValue']));
+                $afterValue = isComplex(boolToString($node['afterValue']));
+                $acc = "Property '{$path}' was changed. From {$beforeValue} to {$afterValue}\n";
                 break;
             case 'deleted':
-                $path .= "{$node['name']}";
-                $acc .= "Property '{$path}' was removed\n";
+                $acc = "Property '{$path}' was removed\n";
                 break;
             case 'added':
-                $path .= "{$node['name']}";
-                $acc .= "Property '{$path}' was added with value: ";
-                $value = boolToString($node['value']);
-                $acc .= isComplex($value);
-                $acc .= "\n";
+                $value = isComplex(boolToString($node['value']));
+                $acc = "Property '{$path}' was added with value: {$value}\n";
                 break;
             default:
                 break;
@@ -81,12 +72,14 @@ function renderTreeToPlain($ast)
         return $acc;
     };
 
-    return array_reduce(
+    $rendered = array_reduce(
         $ast,
-        function ($nAcc, $nCurrent) use (&$iter) {
-                $nAcc .= $iter($nCurrent, '', '');
+        function ($nAcc, $nCurrent) use (&$iter, $pathRoot) {
+            $nAcc[] = $iter($nCurrent, $pathRoot, '');
             return $nAcc;
         },
-        ''
+        []
     );
+
+    return implode("", $rendered);
 }

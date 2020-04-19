@@ -47,7 +47,7 @@ function genDiff($pathToFile1, $pathToFile2, $format)
             $result = renderTreeToPretty($ast);
             break;
         case 'plain':
-            $result = renderTreeToPlain($ast);
+            $result = renderTreeToPlain($ast, null);
             break;
         case 'json':
             $result = renderTreeToJson($ast);

@@ -32,37 +32,39 @@ function buildAstTree($before, $after)
 
         $ast = array_map(
             function ($key) use ($before, $after, &$iter) {
-                if (isset($before[$key]) && isset($after[$key])) {
-                    if (is_array($before[$key]) && is_array($after[$key])) {
-                        $children = $iter($before[$key], $after[$key]);
-                        return [
-                            'name' => $key,
-                            'type' => 'nested',
-                            'children' => $children
-                        ];
-                    } else {
-                        if ($before[$key] === $after[$key]) {
+                if (isset($before[$key])) {
+                    if (isset($after[$key])) {
+                        if (is_array($before[$key]) && is_array($after[$key])) {
+                            $children = $iter($before[$key], $after[$key]);
                             return [
                                 'name' => $key,
-                                'type' => 'not_change',
-                                'value' => $before[$key]
+                                'type' => 'nested',
+                                'children' => $children
                             ];
                         } else {
-                            return [
-                                'name' => $key,
-                                'type' => 'changed',
-                                'beforeValue' => $before[$key],
-                                'afterValue' => $after[$key]
-                            ];
+                            if ($before[$key] === $after[$key]) {
+                                return [
+                                    'name' => $key,
+                                    'type' => 'not_change',
+                                    'value' => $before[$key]
+                                ];
+                            } else {
+                                return [
+                                    'name' => $key,
+                                    'type' => 'changed',
+                                    'beforeValue' => $before[$key],
+                                    'afterValue' => $after[$key]
+                                ];
+                            }
                         }
+                    } else {
+                        return [
+                            'name' => $key,
+                            'type' => 'deleted',
+                            'value' => $before[$key]
+                        ];
                     }
-                } elseif (isset($before[$key])) {
-                    return [
-                        'name' => $key,
-                        'type' => 'deleted',
-                        'value' => $before[$key]
-                    ];
-                } elseif (isset($after[$key])) {
+                } else {
                     return [
                         'name' => $key,
                         'type' => 'added',
