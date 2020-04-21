@@ -37,4 +37,4 @@
 
 #### 4. Возможность выбора формата вывода отчета используя флаг '--format'. Два типа форматов вывода, это 'pretty', 'plain' и 'json'.
 
-[![asciicast](https://asciinema.org/a/p3IWDtVjfkWL9KArethqlBcdg.svg)](https://asciinema.org/a/p3IWDtVjfkWL9KArethqlBcdg)
+[![asciicast](https://asciinema.org/a/X2LwKXSoXSNFkTskVgmgvlqyd.svg)](https://asciinema.org/a/X2LwKXSoXSNFkTskVgmgvlqyd)
