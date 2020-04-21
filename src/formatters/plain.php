@@ -17,6 +17,19 @@
 use function Differ\boolToString;
 
 /**
+ * Function rendering AST (Abstract syntax tree)
+ *
+ * @param array $ast abstract syntax tree
+ *
+ * @return string return diff between two files in plain format
+ */
+function renderTreeToPlain($ast)
+{
+    $plain = buildPlainFormatOutput($ast, null);
+    return "$plain\n";
+}
+
+/**
  * Function check value is a complex structure
  *
  * @param mixed $value value to check
@@ -41,7 +54,7 @@ function isComplex($value)
  *
  * @return string return diff between two files in plain format
  */
-function renderTreeToPlain($ast, $pathRoot)
+function buildPlainFormatOutput($ast, $pathRoot)
 {
     $iter = function ($node, $pathRoot, $acc) {
         if (isset($pathRoot)) {
@@ -52,7 +65,7 @@ function renderTreeToPlain($ast, $pathRoot)
         switch ($node['type']) {
             case 'nested':
                 $pathRoot = $node['name'];
-                $acc = renderTreeToPlain($node['children'], $pathRoot);
+                $acc = buildPlainFormatOutput($node['children'], $pathRoot);
                 break;
             case 'changed':
                 $beforeValue = isComplex(boolToString($node['beforeValue']));

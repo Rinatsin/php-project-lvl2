@@ -25,8 +25,8 @@ use function Differ\boolToString;
  */
 function renderTreeToPretty($ast)
 {
-    $pretty = buildPrettyFormatTree($ast, '  ');
-    return "{\n{$pretty}\n}";
+    $pretty = buildPrettyFormatOutput($ast, '  ');
+    return "{\n{$pretty}\n}\n";
 }
 
 /**
@@ -90,12 +90,12 @@ function arrayToString($data)
  *
  * @return string
  */
-function buildPrettyFormatTree($ast, $depthToSpace)
+function buildPrettyFormatOutput($ast, $depthToSpace)
 {
     $iter = function ($node, $depthToSpace, $acc) {
         switch ($node['type']) {
             case 'nested':
-                $children = buildPrettyFormatTree($node['children'], '      ');
+                $children = buildPrettyFormatOutput($node['children'], '      ');
                 $acc = "{$depthToSpace}  {$node['name']}: {\n$children\n{$depthToSpace}  }";
                 break;
             case 'changed':
