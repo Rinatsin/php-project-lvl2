@@ -32,24 +32,25 @@ function buildAstTree($before, $after)
 
         $ast = array_map(
             function ($key) use ($before, $after, &$iter) {
+                $node = [];
                 if (isset($before[$key])) {
                     if (isset($after[$key])) {
                         if (is_array($before[$key]) && is_array($after[$key])) {
                             $children = $iter($before[$key], $after[$key]);
-                            return [
+                            $node = [
                                 'name' => $key,
                                 'type' => 'nested',
                                 'children' => $children
                             ];
                         } else {
                             if ($before[$key] === $after[$key]) {
-                                return [
+                                $node = [
                                     'name' => $key,
                                     'type' => 'not_change',
                                     'value' => $before[$key]
                                 ];
                             } else {
-                                return [
+                                $node = [
                                     'name' => $key,
                                     'type' => 'changed',
                                     'beforeValue' => $before[$key],
@@ -58,19 +59,20 @@ function buildAstTree($before, $after)
                             }
                         }
                     } else {
-                        return [
+                        $node = [
                             'name' => $key,
                             'type' => 'deleted',
                             'value' => $before[$key]
                         ];
                     }
                 } else {
-                    return [
+                    $node = [
                         'name' => $key,
                         'type' => 'added',
                         'value' => $after[$key]
                     ];
                 }
+                return $node;
             },
             $keys
         );
