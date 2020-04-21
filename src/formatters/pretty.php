@@ -14,9 +14,20 @@
 
 namespace Differ\Formatters;
 
-use ErrorException;
-
 use function Differ\boolToString;
+
+/**
+ * Function rendering tree
+ *
+ * @param array $ast Abstract syntax Tree
+ *
+ * @return string
+ */
+function renderTreeToPretty($ast)
+{
+    $pretty = buildPrettyFormatTree($ast, '  ');
+    return "{\n{$pretty}\n}";
+}
 
 /**
  * Function rendering key state
@@ -36,11 +47,9 @@ function renderType($type)
         case 'added':
             $renderedType = '+ ';
             break;
-        case 'not_change':
+        default:
             $renderedType = '  ';
             break;
-        default:
-            throw new ErrorException('Unknown state of node');
     }
 
     return $renderedType;
@@ -76,66 +85,49 @@ function arrayToString($data)
 /**
  * Function rendering tree
  *
- * @param array $ast Abstract syntax Tree
+ * @param array  $ast          Abstract syntax Tree
+ * @param string $depthToSpace Count spaces
  *
  * @return string
  */
-function renderTreeToPretty($ast)
+function buildPrettyFormatTree($ast, $depthToSpace)
 {
-    $childrenCount = null;
-    $iter = function ($node, $depthToSpace, &$childrenCount, $acc) use (&$iter) {
-        
-        if (isset($childrenCount)) {
-            $childrenCount = $childrenCount - 1;
-        }
+    $iter = function ($node, $depthToSpace, $acc) {
         switch ($node['type']) {
             case 'nested':
-                $childrenCount = count($node['children']);
-                $acc .= "{$depthToSpace}  {$node['name']}: {\n";
-                return array_reduce(
-                    $node['children'],
-                    function ($cAcc, $cNode) use (&$iter, $depthToSpace, &$childrenCount) {
-                        $depthToSpace .= '    ';
-                        return $iter($cNode, $depthToSpace, $childrenCount, $cAcc);
-                    },
-                    $acc
-                );
+                $children = buildPrettyFormatTree($node['children'], '      ');
+                $acc = "{$depthToSpace}  {$node['name']}: {\n$children\n{$depthToSpace}  }";
                 break;
             case 'changed':
                 $beforeValue = boolToString($node['beforeValue']);
-                $acc .= "{$depthToSpace}- {$node['name']}: {$beforeValue}\n";
                 $afterValue = boolToString($node['afterValue']);
-                $acc .= "{$depthToSpace}+ {$node['name']}: {$afterValue}\n";
+                $acc = "{$depthToSpace}- {$node['name']}: {$beforeValue}\n";
+                $acc .= "{$depthToSpace}+ {$node['name']}: {$afterValue}";
                 break;
             case 'added' || 'deleted' || 'not_change':
                 if (is_array($node['value'])) {
                     $strView = arrayToString($node['value']);
                     $type = renderType($node['type']);
-                    $acc .= "{$depthToSpace}{$type}{$node['name']}: {\n";
-                    $depthToSpace .= '  ';
-                    $acc .= "{$depthToSpace}    {$strView}\n{$depthToSpace}}\n";
+                    $acc = "{$depthToSpace}{$type}{$node['name']}: {\n";
+                    $acc .= "{$depthToSpace}      {$strView}\n{$depthToSpace}  }";
                 } else {
                     // Если потомков нет и значение узла не массив
                     $newValue = boolToString($node['value']);
                     $type = renderType($node['type']);
-                    $acc .= "{$depthToSpace}{$type}{$node['name']}: {$newValue}\n";
+                    $acc = "{$depthToSpace}{$type}{$node['name']}: {$newValue}";
                 }
                 break;
-        }
-        // если больше потомков нет то ставим закрывающую скобку
-        if ($childrenCount === 0) {
-            $depthToSpace = '  ';
-            $acc .= "  {$depthToSpace}}\n";
         }
         return $acc;
     };
     $renderingData = array_reduce(
         $ast,
-        function ($iAcc, $iNode) use (&$iter, $childrenCount) {
-            $iAcc .= $iter($iNode, '  ', $childrenCount, '');
+        function ($iAcc, $iNode) use (&$iter, $depthToSpace) {
+            $iAcc[] = $iter($iNode, $depthToSpace, '');
             return $iAcc;
         },
-        ''
+        []
     );
-    return "{\n{$renderingData}}\n";
+    $joined = implode("\n", $renderingData);
+    return $joined;
 }

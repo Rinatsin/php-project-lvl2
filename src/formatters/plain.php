@@ -57,14 +57,14 @@ function renderTreeToPlain($ast, $pathRoot)
             case 'changed':
                 $beforeValue = isComplex(boolToString($node['beforeValue']));
                 $afterValue = isComplex(boolToString($node['afterValue']));
-                $acc = "Property '{$path}' was changed. From {$beforeValue} to {$afterValue}\n";
+                $acc = "Property '{$path}' was changed. From {$beforeValue} to {$afterValue}";
                 break;
             case 'deleted':
-                $acc = "Property '{$path}' was removed\n";
+                $acc = "Property '{$path}' was removed";
                 break;
             case 'added':
                 $value = isComplex(boolToString($node['value']));
-                $acc = "Property '{$path}' was added with value: {$value}\n";
+                $acc = "Property '{$path}' was added with value: {$value}";
                 break;
             default:
                 break;
@@ -75,11 +75,13 @@ function renderTreeToPlain($ast, $pathRoot)
     $rendered = array_reduce(
         $ast,
         function ($nAcc, $nCurrent) use (&$iter, $pathRoot) {
-            $nAcc[] = $iter($nCurrent, $pathRoot, '');
+            $temp = $iter($nCurrent, $pathRoot, '');
+            if (!empty($temp)) {
+                $nAcc[] = $iter($nCurrent, $pathRoot, '');
+            }
             return $nAcc;
         },
         []
     );
-
-    return implode("", $rendered);
+    return implode("\n", $rendered);
 }

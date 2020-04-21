@@ -23,38 +23,5 @@
  */
 function renderTreeToJson($ast)
 {
-    $iter = function ($node) use (&$iter) {
-        switch ($node['type']) {
-            case 'nested':
-                $childrens = array_reduce(
-                    $node['children'],
-                    function ($iAcc, $iNode) use (&$iter) {
-                        $iAcc[] = $iter($iNode);
-                        return $iAcc;
-                    },
-                    []
-                );
-                return [$node['name'] => $childrens];
-                break;
-            case 'changed':
-                return[
-                    [$node['name'] => $node['beforeValue'], 'type' => $node['type']],
-                    [$node['name'] => $node['afterValue'], 'type' => $node['type']]
-                ];
-                break;
-            case 'added' || 'deleted' || 'not_change':
-                return [$node['name'] => $node['value'], "type" => $node['type']];
-                break;
-        }
-    };
-    return json_encode(
-        array_reduce(
-            $ast,
-            function ($nAcc, $nNode) use (&$iter) {
-                $nAcc[] = $iter($nNode);
-                return $nAcc;
-            },
-            []
-        )
-    );
+    return json_encode($ast);
 }
