@@ -25,7 +25,7 @@ use function Differ\boolToString;
  */
 function renderTreeToPretty($ast)
 {
-    $pretty = buildPrettyFormatOutput($ast, '  ');
+    $pretty = buildPrettyFormatOutput($ast);
     return "{\n{$pretty}\n}\n";
 }
 
@@ -38,21 +38,17 @@ function renderTreeToPretty($ast)
  */
 function renderType($type)
 {
-    $renderedType = '';
-
     switch ($type) {
         case 'deleted':
-            $renderedType = '- ';
+            return '- ';
             break;
         case 'added':
-            $renderedType = '+ ';
+            return '+ ';
             break;
         default:
-            $renderedType = '  ';
+            return '  ';
             break;
     }
-
-    return $renderedType;
 }
 
 /**
@@ -62,72 +58,77 @@ function renderType($type)
  *
  * @return string
  */
-function arrayToString($data)
+function joinCollection($data)
 {
     $keys = array_keys($data);
-    $countElements = count($keys);
-    $resultString = array_reduce(
-        $keys,
-        function ($acc, $key) use ($data, &$countElements) {
-            if ($countElements > 1) {
-                $acc .= "{$key}: {$data[$key]},\n";
-            } else {
-                $acc .= "{$key}: {$data[$key]}";
-            }
-            $countElements--;
-            return $acc;
+    $result = array_map(
+        function ($key) use ($data) {
+            return "{$key}: {$data[$key]}";
         },
-        ''
+        $keys
     );
-    return $resultString;
+    return implode(",\n", $result);
+}
+
+/**
+ * Function translate depth to spaces
+ *
+ * @param integer $depth depth of recursion
+ *
+ * @return string spaces
+ */
+function depthToIndentation($depth, $baseIndentation)
+{
+    $indentation = $baseIndentation;
+    $indentationStep = '    ';
+    while ($depth > 0) {
+        $indentation .= $indentationStep;
+        $depth--;
+    }
+    return $indentation;
 }
 
 /**
  * Function rendering tree
  *
- * @param array  $ast          Abstract syntax Tree
- * @param string $depthToSpace Count spaces
+ * @param array   $ast       Abstract syntax Tree
+ * @param string  $curIndent Indentation
+ * @param integer $depth     Count spaces
  *
  * @return string
  */
-function buildPrettyFormatOutput($ast, $depthToSpace)
+function buildPrettyFormatOutput($ast, $curIndent = '  ', $depth = 0)
 {
-    $iter = function ($node, $depthToSpace, $acc) {
-        switch ($node['type']) {
-            case 'nested':
-                $children = buildPrettyFormatOutput($node['children'], '      ');
-                $acc = "{$depthToSpace}  {$node['name']}: {\n$children\n{$depthToSpace}  }";
-                break;
-            case 'changed':
-                $beforeValue = boolToString($node['beforeValue']);
-                $afterValue = boolToString($node['afterValue']);
-                $acc = "{$depthToSpace}- {$node['name']}: {$beforeValue}\n";
-                $acc .= "{$depthToSpace}+ {$node['name']}: {$afterValue}";
-                break;
-            case 'added' || 'deleted' || 'not_change':
-                if (is_array($node['value'])) {
-                    $strView = arrayToString($node['value']);
-                    $type = renderType($node['type']);
-                    $acc = "{$depthToSpace}{$type}{$node['name']}: {\n";
-                    $acc .= "{$depthToSpace}      {$strView}\n{$depthToSpace}  }";
-                } else {
-                    // Если потомков нет и значение узла не массив
-                    $newValue = boolToString($node['value']);
-                    $type = renderType($node['type']);
-                    $acc = "{$depthToSpace}{$type}{$node['name']}: {$newValue}";
-                }
-                break;
-        }
-        return $acc;
-    };
-    $renderingData = array_reduce(
-        $ast,
-        function ($iAcc, $iNode) use (&$iter, $depthToSpace) {
-            $iAcc[] = $iter($iNode, $depthToSpace, '');
-            return $iAcc;
+    $rendered = array_map(
+        function ($node) use ($depth, $curIndent) {
+            switch ($node['type']) {
+                case 'nested':
+                    $depth++;
+                    $indent = depthToIndentation($depth, $curIndent);
+                    $children = buildPrettyFormatOutput($node['children'], $indent, $depth);
+                    return "{$curIndent}  {$node['name']}: {\n$children\n{$curIndent}  }";
+                    break;
+                case 'changed':
+                    $beforValue = boolToString($node['beforeValue']);
+                    $afterValue = boolToString($node['afterValue']);
+                    return "{$curIndent}- {$node['name']}: {$beforValue}\n{$curIndent}+ {$node['name']}: {$afterValue}";
+                    break;
+                case 'added' || 'deleted' || 'not_change':
+                    if (is_array($node['value'])) {
+                        $strView = joinCollection($node['value']);
+                        $type = renderType($node['type']);
+                        return "{$curIndent}{$type}{$node['name']}: {\n{$curIndent}      {$strView}\n{$curIndent}  }";
+                    } else {
+                        $newValue = boolToString($node['value']);
+                        $type = renderType($node['type']);
+                        return "{$curIndent}{$type}{$node['name']}: {$newValue}";
+                    }
+                    break;
+            }
         },
-        []
+        $ast
     );
-    $joined = implode("\n", $renderingData);
+
+    $joined = implode("\n", $rendered);
     return $joined;
 }

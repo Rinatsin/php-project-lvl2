@@ -27,44 +27,14 @@ use Symfony\Component\Yaml\Yaml;
  */
 function getParsedData($data, $extension)
 {
-    $result = [];
-
     switch ($extension) {
         case 'yml':
-            $result = parseYaml($data);
+            return Yaml::parse($data);
             break;
         case 'json':
-            $result = parseJson($data);
+            return json_decode($data, true);
             break;
         default:
             throw new ErrorException("Wrong Data Type: {$extension}");
     }
-
-    return $result;
-}
-
-/**
- * Function parse yaml data
- *
- * @param string $data data from file
- *
- * @return array return array
- */
-function parseYaml($data)
-{
-    $result = Yaml::parse($data);
-    return $result;
-}
-
-/**
- * Function parse json data
- *
- * @param string $data data from file
- *
- * @return array return array
- */
-function parseJson($data)
-{
-    $result = json_decode($data, true);
-    return $result;
 }

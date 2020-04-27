@@ -40,21 +40,18 @@ function genDiff($pathToFile1, $pathToFile2, $format)
     $parsedData1 = getParsedData($dataFromFile1, $pathParts1['extension']);
     $parsedData2 = getParsedData($dataFromFile2, $pathParts2['extension']);
     $ast = buildAstTree($parsedData1, $parsedData2);
-    $result = '';
 
     switch ($format) {
         case 'pretty':
-            $result = renderTreeToPretty($ast);
+            return renderTreeToPretty($ast);
             break;
         case 'plain':
-            $result = renderTreeToPlain($ast);
+            return renderTreeToPlain($ast);
             break;
         case 'json':
-            $result = renderTreeToJson($ast);
+            return renderTreeToJson($ast);
             break;
         default:
             throw new ErrorException("Unknown output format: {$format}");
     }
-    
-    return $result;
 }

@@ -14,6 +14,8 @@
 
  namespace Differ\Formatters;
 
+use ErrorException;
+
 use function Differ\boolToString;
 
 /**
@@ -25,7 +27,7 @@ use function Differ\boolToString;
  */
 function renderTreeToPlain($ast)
 {
-    $plain = buildPlainFormatOutput($ast, null);
+    $plain = buildPlainFormatOutput($ast);
     return "$plain\n";
 }
 
@@ -39,11 +41,23 @@ function renderTreeToPlain($ast)
 function isComplex($value)
 {
     if (is_array($value)) {
-        $result = "'complex value'";
+        return "'complex value'";
     } else {
-        $result = "'{$value}'";
+        return "'{$value}'";
     }
-    return $result;
+}
+
+/**
+ * Check value for complex and bool
+ *
+ * @param mixed $value value for check
+ *
+ * @return string value
+ */
+function checkValue($value)
+{
+    $newValue = boolToString($value);
+    return isComplex($newValue);
 }
 
 /**
@@ -54,47 +68,47 @@ function isComplex($value)
  *
  * @return string return diff between two files in plain format
  */
-function buildPlainFormatOutput($ast, $pathRoot)
+function buildPlainFormatOutput($ast, $pathRoot = null)
 {
-    $iter = function ($node, $pathRoot, $acc) {
-        if (isset($pathRoot)) {
-            $pathParts[] = $pathRoot;
-        }
-        $pathParts[] = $node['name'];
-        $path = implode('.', $pathParts);
-        switch ($node['type']) {
-            case 'nested':
-                $pathRoot = $node['name'];
-                $acc = buildPlainFormatOutput($node['children'], $pathRoot);
-                break;
-            case 'changed':
-                $beforeValue = isComplex(boolToString($node['beforeValue']));
-                $afterValue = isComplex(boolToString($node['afterValue']));
-                $acc = "Property '{$path}' was changed. From {$beforeValue} to {$afterValue}";
-                break;
-            case 'deleted':
-                $acc = "Property '{$path}' was removed";
-                break;
-            case 'added':
-                $value = isComplex(boolToString($node['value']));
-                $acc = "Property '{$path}' was added with value: {$value}";
-                break;
-            default:
-                break;
-        }
-        return $acc;
-    };
-
-    $rendered = array_reduce(
-        $ast,
-        function ($nAcc, $nCurrent) use (&$iter, $pathRoot) {
-            $temp = $iter($nCurrent, $pathRoot, '');
-            if (!empty($temp)) {
-                $nAcc[] = $iter($nCurrent, $pathRoot, '');
+    $mapped = array_map(
+        function ($node) use ($pathRoot) {
+            if (isset($pathRoot)) {
+                $pathParts[] = $pathRoot;
             }
-            return $nAcc;
+            $pathParts[] = $node['name'];
+            $path = implode('.', $pathParts);
+            switch ($node['type']) {
+                case 'nested':
+                    return buildPlainFormatOutput($node['children'], $node['name']);
+                    break;
+                case 'changed':
+                    $beforeValue = checkValue($node['beforeValue']);
+                    $afterValue = checkValue($node['afterValue']);
+                    return "Property '{$path}' was changed. From {$beforeValue} to {$afterValue}";
+                    break;
+                case 'deleted':
+                    return "Property '{$path}' was removed";
+                    break;
+                case 'added':
+                    $value = checkValue($node['value']);
+                    return "Property '{$path}' was added with value: {$value}";
+                    break;
+                case 'not_change':
+                    return;
+                    break;
+                default:
+                    throw new ErrorException("Unknown type of node {$node['type']}");
+            }
         },
-        []
+        $ast
     );
-    return implode("\n", $rendered);
+    $filteredEmptyNodes = array_filter(
+        $mapped,
+        function ($node) {
+            if (!empty($node)) {
+                return $node;
+            }
+        }
+    );
+    return implode("\n", $filteredEmptyNodes);
 }
