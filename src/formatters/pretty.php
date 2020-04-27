@@ -127,7 +127,7 @@ function buildPrettyFormatOutput($ast, $curIndent = '  ', $depth = 0)
             }
         },
         $ast
-    );//sdfsdf fdsfsdf    sdfsd   d   d   d  d  d
+    );
 
     $joined = implode("\n", $rendered);
     return $joined;
