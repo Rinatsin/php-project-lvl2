@@ -115,9 +115,9 @@ function buildPrettyFormatOutput($ast, $curIndent = '  ', $depth = 0)
                     break;
                 case 'added' || 'deleted' || 'not_change':
                     if (is_array($node['value'])) {
-                        $strView = joinCollection($node['value']);
+                        $value = joinCollection($node['value']);
                         $type = renderType($node['type']);
-                        return "{$curIndent}{$type}{$node['name']}: {\n{$curIndent}      {$strView}\n{$curIndent}  }";
+                        return "{$curIndent}{$type}{$node['name']}: {\n{$curIndent}      {$value}\n{$curIndent}  }";
                     } else {
                         $newValue = boolToString($node['value']);
                         $type = renderType($node['type']);
@@ -127,7 +127,7 @@ function buildPrettyFormatOutput($ast, $curIndent = '  ', $depth = 0)
             }
         },
         $ast
-    );
+    );//sdfsdf fdsfsdf    sdfsd   d   d   d  d  d
 
     $joined = implode("\n", $rendered);
     return $joined;
