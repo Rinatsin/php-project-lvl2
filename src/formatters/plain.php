@@ -54,7 +54,7 @@ function isComplex($value)
  *
  * @return string value
  */
-function checkValue($value)
+function stringify($value)
 {
     $newValue = boolToString($value);
     return isComplex($newValue);
@@ -82,15 +82,15 @@ function buildPlainFormatOutput($ast, $pathRoot = null)
                     return buildPlainFormatOutput($node['children'], $node['name']);
                     break;
                 case 'changed':
-                    $beforeValue = checkValue($node['beforeValue']);
-                    $afterValue = checkValue($node['afterValue']);
+                    $beforeValue = stringify($node['beforeValue']);
+                    $afterValue = stringify($node['afterValue']);
                     return "Property '{$path}' was changed. From {$beforeValue} to {$afterValue}";
                     break;
                 case 'deleted':
                     return "Property '{$path}' was removed";
                     break;
                 case 'added':
-                    $value = checkValue($node['value']);
+                    $value = stringify($node['value']);
                     return "Property '{$path}' was added with value: {$value}";
                     break;
                 case 'not_change':
