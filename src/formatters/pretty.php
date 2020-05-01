@@ -14,8 +14,6 @@
 
 namespace Differ\Formatters;
 
-use function Differ\boolToString;
-
 /**
  * Function rendering tree
  *
@@ -26,7 +24,7 @@ use function Differ\boolToString;
 function renderTreeToPretty($ast)
 {
     $pretty = buildPrettyFormatOutput($ast);
-    return "{\n{$pretty}\n}\n";
+    return "{\n{$pretty}\n}";
 }
 
 /**
@@ -54,38 +52,28 @@ function renderType($type)
 /**
  * Function rendering array ti string
  *
- * @param array $data array for rendering
+ * @param array  $value  array for rendering
+ * @param string $indent indentation
  *
  * @return string
  */
-function joinCollection($data)
+function stringifyPretty($value, $indent)
 {
-    $keys = array_keys($data);
-    $result = array_map(
-        function ($key) use ($data) {
-            return "{$key}: {$data[$key]}";
-        },
-        $keys
-    );
-    return implode(",\n", $result);
-}
-
-/**
- * Function translate depth to spaces
- *
- * @param integer $depth depth of recursion
- *
- * @return string spaces
- */
-function depthToIndentation($depth, $baseIndentation)
-{
-    $indentation = $baseIndentation;
-    $indentationStep = '    ';
-    while ($depth > 0) {
-        $indentation .= $indentationStep;
-        $depth--;
+    if (is_bool($value)) {
+        return $value ? 'true' : 'false';
     }
-    return $indentation;
+    if (is_array($value)) {
+        $keys = array_keys($value);
+        $mapped = array_map(
+            function ($key) use ($value, $indent) {
+                return "      {$indent}{$key}: {$value[$key]}";
+            },
+            $keys
+        );
+        $joined = implode(",\n", $mapped);
+        return "{\n{$joined}\n{$indent}  }";
+    }
+    return $value;
 }
 
 /**
@@ -103,32 +91,27 @@ function buildPrettyFormatOutput($ast, $curIndent = '  ', $depth = 0)
         function ($node) use ($depth, $curIndent) {
             switch ($node['type']) {
                 case 'nested':
-                    $depth++;
-                    $indent = depthToIndentation($depth, $curIndent);
-                    $children = buildPrettyFormatOutput($node['children'], $indent, $depth);
+                    $depth += 1;
+                    $indentationStep = '    ';
+                    $addIndent = str_repeat($indentationStep, $depth);
+                    $newIndent = $curIndent . $addIndent;
+                    $children = buildPrettyFormatOutput($node['children'], $newIndent, $depth);
                     return "{$curIndent}  {$node['name']}: {\n$children\n{$curIndent}  }";
                     break;
                 case 'changed':
-                    $beforValue = boolToString($node['beforeValue']);
-                    $afterValue = boolToString($node['afterValue']);
+                    $beforValue = stringifyPretty($node['beforeValue'], $curIndent);
+                    $afterValue = stringifyPretty($node['afterValue'], $curIndent);
                     return "{$curIndent}- {$node['name']}: {$beforValue}\n{$curIndent}+ {$node['name']}: {$afterValue}";
                     break;
                 case 'added' || 'deleted' || 'not_change':
-                    if (is_array($node['value'])) {
-                        $value = joinCollection($node['value']);
-                        $type = renderType($node['type']);
-                        return "{$curIndent}{$type}{$node['name']}: {\n{$curIndent}      {$value}\n{$curIndent}  }";
-                    } else {
-                        $newValue = boolToString($node['value']);
-                        $type = renderType($node['type']);
-                        return "{$curIndent}{$type}{$node['name']}: {$newValue}";
-                    }
+                    $value = stringifyPretty($node['value'], $curIndent);
+                    $type = renderType($node['type']);
+                    return "{$curIndent}{$type}{$node['name']}: {$value}";
                     break;
             }
         },
         $ast
     );
-
     $joined = implode("\n", $rendered);
     return $joined;
 }

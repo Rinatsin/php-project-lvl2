@@ -31,7 +31,7 @@ $argc = Docopt::handle($doc);
 
 if ($argc['<firstFile>']) {
   $diff = genDiff($argc['<firstFile>'], $argc['<secondFile>'], $argc['--format']);
-  echo $diff;
+  echo $diff . "\n";
   exit;
 }
 

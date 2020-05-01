@@ -23,7 +23,6 @@
             "src/genDiff.php",
             "src/parsers.php",
             "src/getAst.php",
-            "src/boolToString.php",
             "src/formatters/pretty.php",
             "src/formatters/plain.php",
             "src/formatters/json.php"
