@@ -39,13 +39,10 @@ function renderType($type)
     switch ($type) {
         case 'deleted':
             return '- ';
-            break;
         case 'added':
             return '+ ';
-            break;
         default:
             return '  ';
-            break;
     }
 }
 
@@ -79,35 +76,32 @@ function stringifyPretty($value, $indent)
 /**
  * Function rendering tree
  *
- * @param array   $ast       Abstract syntax Tree
- * @param string  $curIndent Indentation
- * @param integer $depth     Count spaces
+ * @param array   $ast   Abstract syntax Tree
+ * @param integer $depth Count spaces
  *
  * @return string
  */
-function buildPrettyFormatOutput($ast, $curIndent = '  ', $depth = 0)
+function buildPrettyFormatOutput($ast, $depth = 0)
 {
+    $baseIndent = '  ';
+    $indentationStep = '    ';
+    $addIndent = str_repeat($indentationStep, $depth);
+    $indent = $baseIndent . $addIndent;
     $rendered = array_map(
-        function ($node) use ($depth, $curIndent) {
+        function ($node) use ($depth, $indent) {
             switch ($node['type']) {
                 case 'nested':
                     $depth += 1;
-                    $indentationStep = '    ';
-                    $addIndent = str_repeat($indentationStep, $depth);
-                    $newIndent = $curIndent . $addIndent;
-                    $children = buildPrettyFormatOutput($node['children'], $newIndent, $depth);
-                    return "{$curIndent}  {$node['name']}: {\n$children\n{$curIndent}  }";
-                    break;
+                    $children = buildPrettyFormatOutput($node['children'], $depth);
+                    return "{$indent}  {$node['name']}: {\n$children\n{$indent}  }";
                 case 'changed':
-                    $beforValue = stringifyPretty($node['beforeValue'], $curIndent);
-                    $afterValue = stringifyPretty($node['afterValue'], $curIndent);
-                    return "{$curIndent}- {$node['name']}: {$beforValue}\n{$curIndent}+ {$node['name']}: {$afterValue}";
-                    break;
+                    $beforValue = stringifyPretty($node['beforeValue'], $indent);
+                    $afterValue = stringifyPretty($node['afterValue'], $indent);
+                    return "{$indent}- {$node['name']}: {$beforValue}\n{$indent}+ {$node['name']}: {$afterValue}";
                 case 'added' || 'deleted' || 'not_change':
-                    $value = stringifyPretty($node['value'], $curIndent);
+                    $value = stringifyPretty($node['value'], $indent);
                     $type = renderType($node['type']);
-                    return "{$curIndent}{$type}{$node['name']}: {$value}";
-                    break;
+                    return "{$indent}{$type}{$node['name']}: {$value}";
             }
         },
         $ast

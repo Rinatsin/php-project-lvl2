@@ -25,7 +25,7 @@ use function Funct\Collection\compact;
  *
  * @return string value
  */
-function stringifyValueForPlain($value)
+function stringify($value)
 {
     if (is_bool($value)) {
         return $value ? 'true' : 'false';
@@ -56,19 +56,15 @@ function renderTreeToPlain($ast, $pathRoot = null)
             switch ($node['type']) {
                 case 'nested':
                     return renderTreeToPlain($node['children'], $node['name']);
-                    break;
                 case 'changed':
-                    $beforeValue = stringifyValueForPlain($node['beforeValue']);
-                    $afterValue = stringifyValueForPlain($node['afterValue']);
+                    $beforeValue = stringify($node['beforeValue']);
+                    $afterValue = stringify($node['afterValue']);
                     return "Property '{$path}' was changed. From {$beforeValue} to {$afterValue}";
-                    break;
                 case 'deleted':
                     return "Property '{$path}' was removed";
-                    break;
                 case 'added':
-                    $value = stringifyValueForPlain($node['value']);
+                    $value = stringify($node['value']);
                     return "Property '{$path}' was added with value: {$value}";
-                    break;
                 case 'not_change':
                     return;
                 default:
